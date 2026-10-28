@@ -1,0 +1,1003 @@
+% ======================================================================
+%  Linear Algebra 1 Cheatsheet (vector spaces, matrices, determinants,
+%  eigenvalues, Euclidean geometry, spectral theory, quadratic forms)
+%  Self-contained: compile with pdflatex (two runs).
+%  Anonymous: no author names.
+% ======================================================================
+\documentclass[10pt,a4paper,landscape]{article}
+
+% ---------- packages ----------
+\usepackage[landscape,margin=1.1cm,top=1.0cm,bottom=1.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+
+% ---------- colors ----------
+\definecolor{defblue}{RGB}{20,60,120}
+\definecolor{thmgreen}{RGB}{0,100,60}
+\definecolor{exgray}{RGB}{90,90,90}
+\definecolor{boxbg}{RGB}{245,247,250}
+\definecolor{headbg}{RGB}{30,50,80}
+
+% ---------- theorem environments ----------
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{exm}{Example}[section]
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{cor}{Corollary}[section]
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+
+% ---------- math shortcuts ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\re}{\operatorname{Re}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\oo}{\infty}
+\newcommand{\deq}{\coloneqq}
+\newcommand{\comp}{\circ}
+\newcommand{\inv}{^{-1}}
+\newcommand{\restr}[2]{#1|_{#2}}
+\DeclareMathOperator{\Lin}{Lin}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Mat}{Mat}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\SLgrp}{SL}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\rk}{rk}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\img}{img}
+\DeclareMathOperator{\Ann}{Ann}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand{\On}{\mathrm{O}}
+\newcommand{\SOn}{\mathrm{SO}}
+\newcommand{\Un}{\mathrm{U}}
+\newcommand{\ip}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\dsum}{\oplus}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\Char}{\chi}
+
+% ---------- compact layout ----------
+\setlist{nosep,leftmargin=1.1em,itemsep=0.5pt,topsep=1pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{1.5pt}
+\setlength{\belowdisplayshortskip}{1.5pt}
+\setlength{\columnsep}{14pt}
+\setlength{\columnseprule}{0.3pt}
+
+% ---------- headers/footers ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{headbg}\textbf{Linear Algebra 1 Cheatsheet}}
+\fancyhead[R]{\footnotesize\color{headbg}Vector Spaces, Bases, Matrices, Gaussian Elimination, Linear Equations, Determinants, Eigenvalues, Euclidean Spaces, Spectral Theorem, Quadratic Forms}
+\fancyfoot[C]{\footnotesize\color{exgray}Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.2pt}
+
+% ---------- section styling ----------
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}[{\color{headbg}\titlerule[0.6pt]}]
+\titlespacing{\section}{0pt}{6pt}{3pt}
+\titleformat{\subsection}{\normalsize\bfseries\color{defblue}}{\thesubsection}{0.5em}{}
+\titlespacing{\subsection}{0pt}{4pt}{2pt}
+
+% ---------- proof sketch ----------
+\newenvironment{proofsketch}{%
+  \par\small\color{exgray}\textbf{Sketch.}\ }%
+  {\par}
+
+\begin{document}
+
+\begin{multicols*}{3}
+
+% ======================================================================
+\section{Vector Spaces}
+% ======================================================================
+
+\begin{defn}[$K$-vector space]
+A \emph{vector space} over the field $K$ consists of a set $V$, an \emph{addition} $V \times V \to V$ and a \emph{scalar multiplication} $K \times V \to V$ such that $(V,+)$ is an abelian group (associative, commutative, zero vector $0$, inverses $-v$) and for all $\alpha,\beta \in K$, $v,w \in V$:
+{\footnotesize\[
+\begin{gathered}
+1v = v, \quad \alpha(\beta v) = (\alpha\beta)v, \quad \alpha(v+w) = \alpha v + \alpha w,\\
+(\alpha+\beta)v = \alpha v + \beta v.
+\end{gathered}
+\]}
+\end{defn}
+
+\begin{prop}[Computation rules]
+For every $\alpha \in K$ and $v \in V$: $\alpha 0 = 0$ and $0v = 0$; if $\alpha v = 0$ then $\alpha = 0$ or $v = 0$; $(-1)v = -v$.
+\end{prop}
+
+\begin{exm}
+$K^n = K \times \cdots \times K$ with componentwise operations; the polynomial space $K[X]$; the function spaces $C^k(I)$ and the analytic functions $O(I)$ on an interval $I$; the convergent sequences $(x_n)$ in $K$; the solutions of a linear differential equation.
+\end{exm}
+
+\begin{defn}[Subspace]
+$T \subseteq V$ is a \emph{(linear) subspace} if addition and scalar multiplication restrict to $T \times T$ and $K \times T$, making $T$ itself a vector space.
+\end{defn}
+
+\begin{lem}[Subspace criterion]
+$T \subseteq V$ is a subspace iff $T \neq \emptyset$ and $x,y \in T \Rightarrow x+y \in T$ and $\alpha \in K,\, x \in T \Rightarrow \alpha x \in T$. (Equivalently: $0 \in T$ and $T$ closed under $x + \alpha y$.)
+\begin{proofsketch}
+If $T \neq \emptyset$, pick $x \in T$; then $0 = 0x \in T$. The axioms are inherited from $V$.
+\end{proofsketch}
+\end{lem}
+
+\begin{prop}
+The intersection of any family of subspaces of $V$ is a subspace of $V$. (The union of two subspaces is a subspace only if one contains the other.)
+\end{prop}
+
+\begin{defn}[Linear map]
+$f: V \to W$ is \emph{linear} if $f(x+y) = f(x)+f(y)$ and $f(\alpha x) = \alpha f(x)$ for all $x,y \in V$, $\alpha \in K$. Then $f(0) = 0$, $f(-x) = -f(x)$, and compositions of linear maps are linear.
+\end{defn}
+
+\begin{lem}[Image and kernel]
+For linear $f: V \to W$: if $T \subseteq V$ is a subspace, so is $f(T) \subseteq W$; if $U \subseteq W$ is a subspace, so is $f^{-1}(U) \subseteq V$. In particular
+\[
+\begin{gathered}
+\img f = f(V) \subseteq W,\\
+\ker f = f^{-1}\set{0} = \set{x \in V \mid f(x) = 0} \subseteq V
+\end{gathered}
+\]
+are subspaces.
+\end{lem}
+
+\begin{lem}
+A linear map $f$ is injective iff $\ker f = \set{0}$.
+\begin{proofsketch}
+$f(x) = f(y) \Leftrightarrow x - y \in \ker f$.
+\end{proofsketch}
+\end{lem}
+
+\begin{lem}
+If the linear map $f: V \to W$ is bijective, then $f^{-1}: W \to V$ is linear.
+\end{lem}
+
+\begin{defn}[Isomorphism]
+Bijective linear maps are called \emph{isomorphisms}; $V$ and $W$ are \emph{isomorphic} ($V \cong W$) if an isomorphism $V \to W$ exists. Isomorphic spaces are interchangeable for all linear-algebraic purposes.
+\end{defn}
+
+\begin{exm}
+Every matrix $a \in \Mat(p \times n, K)$ defines a linear map $K^n \to K^p$, $x \mapsto ax$, with $(ax)_i = \sum_{j=1}^n a_{ij}x_j$. Further examples: the limit map $(x_n) \mapsto \lim x_n$ on convergent sequences; the differential operators $D: C^{k+1}(I) \to C^{k}(I)$, $f \mapsto f'$; $D: O(I) \to O(I)$; and generally $Df = f^{(n)} + a_{n-1}f^{(n-1)} + \dots + a_0 f$ with coefficient functions $a_j$.
+\end{exm}
+
+% ======================================================================
+\section{Bases \& Dimension}
+% ======================================================================
+
+\begin{defn}[Linear span]
+For $v_1, \dots, v_r \in V$,
+\[
+\Lin(v_1, \dots, v_r) \deq \set{\textstyle\sum_{i=1}^r \lambda_i v_i \mid \lambda_i \in K} \subseteq V
+\]
+is the set of \emph{linear combinations}; it is the smallest subspace of $V$ containing $v_1, \dots, v_r$ (the image of the coefficient map $K^r \to V$, $(\lambda_i) \mapsto \sum \lambda_i v_i$).
+\end{defn}
+
+\begin{defn}[Linear independence]
+The tuple $(v_1, \dots, v_r)$ is \emph{linearly independent} if $\sum_i \lambda_i v_i = 0$ implies $\lambda_1 = \cdots = \lambda_r = 0$; otherwise \emph{dependent}. (The empty tuple is independent.) Independence means: the coefficient map is injective, i.e.\ the coefficients of every combination are uniquely determined.
+\end{defn}
+
+\begin{lem}
+$(v_1, \dots, v_r)$ is dependent iff some $v_k$ is a linear combination of the $v_i$ with $i \neq k$.
+\end{lem}
+
+\begin{lem}
+If $(v_1, \dots, v_r)$ is independent and $w \in V$, then $(v_1, \dots, v_r, w)$ is dependent iff $w \in \Lin(v_1, \dots, v_r)$.
+\end{lem}
+
+\begin{defn}[Basis]
+$(v_1, \dots, v_n)$ is a \emph{basis} of $V$ if $\Lin(v_1, \dots, v_n) = V$ and the tuple is independent --- equivalently: every $v \in V$ is a \emph{unique} combination $\sum_i \lambda_i v_i$ (the coefficient map is an isomorphism $K^n \cong V$).
+\end{defn}
+
+\begin{exm}
+The \emph{standard basis} $(e_1, \dots, e_n)$ of $K^n$; in $\R^2$ two non-collinear vectors form a basis (parallelogram construction); $(1, X, X^2, \dots, X^r)$ is independent in $K[X]$, more generally any family of polynomials of distinct degrees.
+\end{exm}
+
+\begin{rem}
+A tuple containing the zero vector, or two equal vectors, is dependent. Independence is a property of the \emph{tuple}, not of the underlying set.
+\end{rem}
+
+\begin{thm}[Basis extension]
+If $(v_1, \dots, v_r)$ is independent and $\Lin(v_1, \dots, v_r, w_1, \dots, w_s) = V$, then $(v_1, \dots, v_r)$ can be extended to a basis of $V$ by adding suitable of the $w_j$.
+\end{thm}
+
+\begin{thm}[Exchange lemma]
+If $(v_1, \dots, v_r)$ and $(w_1, \dots, w_s)$ are bases of the same space $V$, then for each $i$ there is $j$ such that $(v_1, \dots, v_{i-1}, w_j, v_{i+1}, \dots, v_r)$ is again a basis.
+\begin{proofsketch}
+$v_i \notin \Lin(v_1, \dots, \widehat{v_i}, \dots, v_r)$, so some $w_j$ lies outside this span; adjoin it.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}
+Any two bases of $V$ have the same number of elements. If this number is $n \in \N$, $V$ is \emph{finite-dimensional} of \emph{dimension} $\dim V = n$; otherwise $\dim V = \oo$. Also $\dim K^n = n$.
+\end{thm}
+
+\begin{cor}
+In an $n$-dimensional space: a spanning family has at least $n$, an independent family at most $n$ members; $n$ given vectors form a basis iff they are independent iff they span. (Neither implication may be reversed for $r \neq n$.)
+\end{cor}
+
+\begin{thm}
+Every subspace $U$ of a finite-dimensional $V$ is finite-dimensional with $\dim U \le \dim V$, and $\dim U = \dim V$ only for $U = V$; every basis of $U$ extends to a basis of $V$.
+\end{thm}
+
+\begin{defn}[Product and sum]
+The \emph{cartesian product} $V \times W$ with componentwise operations is a vector space, $\dim(V \times W) = \dim V + \dim W$. For subspaces $S, T \subseteq V$ the \emph{sum}
+\[
+S + T \deq \set{x + y \mid x \in S,\ y \in T} \subseteq V
+\]
+is a subspace; e.g.\ $\Lin(v_1,\dots,v_r) + \Lin(w_1,\dots,w_s) = \Lin(v_1,\dots,v_r,w_1,\dots,w_s)$.
+\end{defn}
+
+\begin{thm}[Dimension formula for subspaces]
+For finite-dimensional subspaces $S, T \subseteq V$:
+\[
+\dim S + \dim T = \dim(S \cap T) + \dim(S + T).
+\]
+\begin{proofsketch}
+Extend a basis $(u_1, \dots, u_r)$ of $S \cap T$ to bases $(u_i, v_j)$ of $S$ and $(u_i, w_k)$ of $T$; then $(u_i, v_j, w_k)$ is a basis of $S + T$.
+\end{proofsketch}
+\end{thm}
+
+\begin{defn}[Direct sum / complement]
+The sum $S + T$ is \emph{direct} ($S \dsum T$) if $S \cap T = \set{0}$; if moreover $S \dsum T = V$, then $S$ and $T$ are \emph{complementary} subspaces. Then $S \times T \to V$, $(x,y) \mapsto x+y$, is an isomorphism, and $\dim S + \dim T = \dim V$. Complements exist by the basis extension theorem and are far from unique.
+\end{defn}
+
+\begin{exm}
+$C^0(\R) = S \dsum T$ where $S$ = even, $T$ = odd continuous functions: only $0$ is both, and
+\[
+f(t) = \tfrac{f(t)+f(-t)}{2} + \tfrac{f(t)-f(-t)}{2} \in S + T.
+\]
+\end{exm}
+
+\begin{rem}
+$K[X]$ is infinite-dimensional: $(1, X, X^2, \dots)$ is independent. Its subspace of polynomials of degree $\le k$ has dimension $k+1$.
+\end{rem}
+
+% ======================================================================
+\section{Matrices \& Coordinates}
+% ======================================================================
+
+\begin{defn}[Basis isomorphism / card]
+For a basis $v = (v_1, \dots, v_n)$ of $V$, the coefficient map $v: K^n \to V$, $(\lambda_i) \mapsto \sum \lambda_i v_i$, is an isomorphism (\emph{basis isomorphism}); its inverse $v^{-1}: V \to K^n$ is the \emph{card} (coordinate map) determined by $v$.
+\end{defn}
+
+\begin{thm}
+Two finite-dimensional $K$-vector spaces are isomorphic iff they have the same dimension.
+\begin{proofsketch}
+$v^{-1} w$ paste cards; conversely an isomorphism carries a basis to a basis.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Matrix of a map on $K^n$]
+For every linear map $f: K^n \to K^p$ there is a \emph{unique} matrix $a \in \Mat(p \times n, K)$ with $f(x) = ax$ for all $x$.
+\end{thm}
+
+\begin{prop}[Fundamental rule]
+The columns of $a \in \Mat(p \times n, K)$ are the images of the standard basis vectors: $ae_j = a_j$ ($j$-th column). In general, for bases $v$ of $V$ and $w$ of $W$, the matrix describing $f: V \to W$ is that of the composition
+\[
+K^n \xrightarrow{\;v\;} V \xrightarrow{\;f\;} W \xrightarrow{\;w^{-1}\;} K^p .
+\]
+\end{prop}
+
+\begin{thm}
+For $\dim V = n$, $\dim W = p$ and fixed bases, $f \mapsto$ (matrix of $f$) is a linear isomorphism $\Hom(V,W) \cong \Mat(p \times n, K)$; in particular $\dim \Hom(V,W) = \dim V \cdot \dim W$.
+\end{thm}
+
+\begin{thm}[Extension theorem]
+If $(v_1, \dots, v_n)$ is a basis of $V$ and $w_1, \dots, w_n \in W$ are arbitrary vectors, there is exactly one linear map $f: V \to W$ with $f(v_j) = w_j$ for all $j$.
+\end{thm}
+
+\begin{defn}[Matrix product]
+For $b \in \Mat(q \times p, K)$, $a \in \Mat(p \times n, K)$:
+\[
+(ba)_{ik} \deq \sum_{j=1}^{p} b_{ij}a_{jk} \in \Mat(q \times n, K).
+\]
+Associative and distributive wherever defined; $\lambda(ab) = (\lambda a)b = a(\lambda b)$.
+\end{defn}
+
+\begin{lem}
+If $f$ and $g$ are described by matrices $a$ and $b$ (suitable bases), then $g \comp f$ is described by the product $ba$ --- \emph{reversed order}.
+\end{lem}
+
+\begin{defn}[Invertible matrices]
+$u \in \Mat(p \times n, K)$ is \emph{invertible} if $v$ with $uv = \one_p$ and $vu = \one_n$ exists; then $v = u^{-1}$ is unique. Invertibility forces $p = n$. $u$ is invertible iff $u: K^n \to K^p$ is an isomorphism, and $u^{-1}$ is the inverse map.
+\end{defn}
+
+\begin{defn}[General linear group]
+\[
+\GL(n,K) \deq \set{u \in \Mat(n \times n, K) \mid u \text{ invertible}}
+\]
+is a group under multiplication (non-abelian for $n > 1$); likewise $\GL(V) = \Aut(V)$ for a vector space $V$.
+\end{defn}
+
+\begin{defn}[Elementary matrices]
+For $n \in \N$ and $k \neq l$: $p_{kl}$ (swap rows $k,l$; permutation matrix), $d_k(\lambda)$ (multiply row $k$ by $\lambda$), $u_{kl}(\lambda)$ (add $\lambda$ times row $l$ to row $k$) all lie in $\GL(n,K)$. Multiplying $a$ from the \emph{left} performs the corresponding \emph{elementary row operation}; from the right, the analogous \emph{column operation} (with the roles of $k,l$ interchanged for $u_{kl}$).
+\end{defn}
+
+% ======================================================================
+\section{Rank \& Gaussian Elimination}
+% ======================================================================
+
+\begin{defn}[Rank]
+$f: V \to W$ has \emph{finite rank} if $\img f$ is finite-dimensional; then $\rk f \deq \dim \img f$.
+\end{defn}
+
+\begin{thm}[Rank--nullity formula]
+For $V$ finite-dimensional and $f: V \to W$ linear:
+\[
+\dim \ker f + \rk f = \dim V.
+\]
+\begin{proofsketch}
+Extend a basis $(v_1, \dots, v_k)$ of $\ker f$ to a basis of $V$; the restriction of $f$ to $\Lin(v_{k+1}, \dots, v_n)$ is an isomorphism onto $\img f$.
+\end{proofsketch}
+\end{thm}
+
+\begin{lem}[Invariances]
+If $g, h$ are isomorphisms, $\rk(hfg) = \rk f$; rank does not depend on the bases chosen. Elementary row and column operations preserve the rank; \emph{row} operations preserve $\ker a$, \emph{column} operations preserve $\img a$.
+\end{lem}
+
+\begin{prop}
+$\img a = \Lin(a_1, \dots, a_n)$ (column span), so $\rk a$ is the dimension of the column span, and $\rk a = \rk a^t$.
+\end{prop}
+
+\begin{defn}[Echelon form]
+A matrix is in \emph{row echelon form} if in each row the first nonzero entry (the ``step'') stands strictly to the right of the step of the row above; zero rows come last. In the \emph{refined} form each step column contains a standard basis vector $e_s$.
+\end{defn}
+
+\begin{thm}[Gaussian algorithm]
+Row operations bring any matrix into row echelon form; further row operations refine it. (Column echelon forms are defined analogously and reached by column operations.)
+\end{thm}
+
+\begin{lem}[Reading off image and kernel]
+\begin{itemize}
+\item If $a$ has \emph{column} echelon form, its nonzero columns form a basis of $\img a$; the number of steps is $\rk a$.
+\item If $a$ has \emph{refined row} echelon form with step indices $j_1 < \dots < j_r$, then a basis of $\ker a$ is given by the vectors $v_k$ ($k$ not a step index) with $(v_k)_k = 1$, $(v_k)_{j_s} = -a_{s k}$, all other entries $0$.
+\end{itemize}
+\end{lem}
+
+\begin{prop}[Computing]
+\begin{itemize}
+\item Basis of $\Lin(v_1, \dots, v_n)$ for $v_j \in K^p$: put the $v_j$ as columns into a matrix, apply the Gaussian algorithm; either read off the nonzero columns (column version) or select those original columns that stand at the step indices (row version). Then the span has dimension $r = \rk a$, and $(v_1, \dots, v_n)$ is independent iff $r = n$.
+\item Basis of $S + T$: apply this to the union of the two spanning families.
+\end{itemize}
+\end{prop}
+
+\begin{thm}[Rank normal form]
+For $f: V \to W$ ($\dim V = n$, $\dim W = p$) there are bases of $V$ and $W$ with respect to which $f$ is described by
+\[
+\begin{pmatrix} \one_r & 0 \\ 0 & 0 \end{pmatrix} \in \Mat(p \times n, K), \qquad r = \rk f.
+\]
+\end{thm}
+
+% ======================================================================
+\section{Linear Equations \& Matrix Inversion}
+% ======================================================================
+
+\begin{defn}[Affine subspace]
+$A = a + L \deq \set{a + x \mid x \in L}$ with $a \in V$ and a subspace $L \subseteq V$ is an \emph{affine subspace}; $\emptyset$ is affine by convention.
+\end{defn}
+
+\begin{lem}
+For a nonempty affine subspace $A = a + L$: the parallel subspace $L = \set{x - y \mid x, y \in A}$ is determined by $A$; define $\dim A \deq \dim L$. Moreover $A = b + L$ iff $b \in A$; the affine subspaces containing $0$ are exactly the linear subspaces.
+\end{lem}
+
+\begin{lem}[Fibres]
+For linear $f: V \to W$ and $b \in W$, the fibre $f^{-1}\set{b}$ is empty or an affine subspace with parallel space $\ker f$: if $f(a) = b$ then $f^{-1}\set{b} = a + \ker f$.
+\end{lem}
+
+\begin{prop}[Solving $ax = b$]
+Apply row operations to $(a \mid b)$ until the left block has echelon form; read off the solution set $x_0 + \ker a$. Consistency: solvable iff the ranks of $a$ and $(a|b)$ agree.
+\end{prop}
+
+\begin{thm}[Invertibility criteria]
+For $a \in \Mat(n \times n, K)$ the following are equivalent:
+\begin{itemize}
+\item $\rk a = n$ \quad ($a$ surjective);
+\item $\ker a = \set{0}$ \quad ($a$ injective);
+\item $a \in \GL(n,K)$;
+\item there is $x$ with $ax = \one$; \item there is $x$ with $xa = \one$.
+\end{itemize}
+Then necessarily $x = a^{-1}$.
+\begin{proofsketch}
+Rank--nullility: injective $\Leftrightarrow$ surjective for square matrices; then the left/right inverse is the inverse.
+\end{proofsketch}
+\end{thm}
+
+\begin{prop}[Inverting by elimination]
+Row-reduce $(a \mid \one) \in \Mat(n \times 2n, K)$: if the left block reaches echelon form with $n$ steps, the refinement yields $(\one \mid a^{-1})$; fewer steps mean $a$ is not invertible.
+\end{prop}
+
+\begin{exm}
+$a = \left(\begin{smallmatrix} 1 & 1 \\ 2 & 3 \end{smallmatrix}\right)$: row-reducing $(a \mid \one)$ gives $a^{-1} = \left(\begin{smallmatrix} 3 & -1 \\ -2 & 1 \end{smallmatrix}\right)$.
+\end{exm}
+
+% ======================================================================
+\section{Linear Differential Equations}
+% ======================================================================
+
+\begin{defn}
+With continuous coefficients $a_0, \dots, a_{n-1}$ and $b$ on an interval $I \subset \R$,
+\[
+Df = f^{(n)} + a_{n-1} f^{(n-1)} + \dots + a_1 f' + a_0 f = b
+\]
+is a \emph{linear differential equation}; $D: C^n(I) \to C^0(I)$ is linear, and solving means computing $\ker D$ resp.\ the fibres $D^{-1}\set{b} = f_0 + \ker D$.
+\end{defn}
+
+\begin{thm}[Existence and uniqueness]
+For each point $t_0 \in I$ and vector $(x_0, \dots, x_{n-1}) \in \C^n$ there is exactly one $f \in C^n(I)$ with $Df = b$ and $f^{(j)}(t_0) = x_j$ for $j = 0, \dots, n-1$. Hence the solution space of the homogeneous equation $Df = 0$ has dimension $n$ (the initial value map is an isomorphism).
+\end{thm}
+
+\begin{thm}[Constant coefficients]
+Let $a_j \in \C$ be constants and let $p(X) = X^n + a_{n-1}X^{n-1} + \dots + a_0 = \prod_{j=1}^r (X - c_j)^{e_j}$ be the factorization of the \emph{characteristic polynomial}. A basis of the solution space of $Df = 0$ is given by the $n$ functions
+\[
+t \mapsto t^{\ell} e^{c_j t}, \qquad j = 1, \dots, r, \quad \ell = 0, \dots, e_j - 1 .
+\]
+\end{thm}
+
+\begin{exm}[Damped harmonic oscillator]
+$f'' + 2\alpha f' + \beta^2 f = 0$ ($\alpha$ damping, $\beta$ restoring force): $p(X) = (X + \alpha)^2 + (\beta^2 - \alpha^2)$. For weak damping $\alpha < \beta$ the complex roots $-\alpha \pm i\sqrt{\beta^2 - \alpha^2}$ yield the real solutions $e^{-\alpha t}\cos(\sqrt{\beta^2 - \alpha^2}\, t)$, $e^{-\alpha t}\sin(\sqrt{\beta^2 - \alpha^2}\, t)$ (see Section 9).
+\end{exm}
+
+% ======================================================================
+\section{Determinants}
+% ======================================================================
+
+\begin{thm}[Definition of the determinant]
+There is exactly one map $\det: \Mat(n \times n, K) \to K$ with:
+\begin{itemize}
+\item $\det$ is linear in each column separately (multilinearity);
+\item $\det a = 0$ if $a$ has two equal columns (alternating);
+\item $\det \one = 1$ (normalized).
+\end{itemize}
+\end{thm}
+
+\begin{lem}[Behavior under column operations]
+{\footnotesize\[
+\begin{gathered}
+\det(a p_{kl}) = -\det a, \qquad \det(a d_k(\lambda)) = \lambda \det a,\\
+\det(a u_{kl}(\lambda)) = \det a,
+\end{gathered}
+\]}
+and correspondingly for row operations. Adding to one column a multiple of another never changes the determinant; a zero column forces $\det a = 0$.
+\end{lem}
+
+\begin{thm}[Invertibility test]
+$\det a \neq 0 \iff a \in \GL(n,K)$.
+\begin{proofsketch}
+Bring $a$ to echelon form: the result is triangular with diagonal product $= \pm \det a$; it is $\one$ iff $a$ is invertible.
+\end{proofsketch}
+\end{thm}
+
+\begin{prop}[Laplace expansion]
+Let $a^{kl}$ be the minor obtained by deleting row $k$ and column $l$. Then
+{\footnotesize\[
+\begin{gathered}
+\det a = \sum_{l=1}^{n} (-1)^{k+l} a_{kl} \det a^{kl} \quad \text{(along row $k$)},\\
+\det a = \sum_{k=1}^{n} (-1)^{k+l} a_{kl} \det a^{kl} \quad \text{(along column $l$).}
+\end{gathered}
+\]}
+\end{prop}
+
+\begin{defn}[Transpose]
+$(a^t)_{ij} = a_{ji}$. Rules: $(a+b)^t = a^t + b^t$, $(ab)^t = b^t a^t$, $\rk a = \rk a^t$, and $(a^t)^{-1} = (a^{-1})^t$.
+\end{defn}
+
+\begin{thm}
+$\det a^t = \det a$; everything said about columns holds for rows too.
+\end{thm}
+
+\begin{thm}[Product formula]
+$\det(ab) = \det a \cdot \det b$. Thus $\det: \GL(n,K) \to K \setminus \set{0}$ is a group homomorphism; its kernel
+\[
+\SLgrp(n,K) \deq \set{u \in \GL(n,K) \mid \det u = 1}
+\]
+is the \emph{special linear group}. Also $\det a^{-1} = (\det a)^{-1}$.
+\end{thm}
+
+\begin{defn}[Adjugate]
+For $a \in \Mat(n \times n, K)$ let $\tilde a_{kl} \deq (-1)^{k+l} \det a^{lk}$ (note the swapped indices) define the \emph{adjugate} $\tilde a$.
+\end{defn}
+
+\begin{thm}
+$a \tilde a = \tilde a a = \det a \cdot \one$; hence for invertible $a$:
+\[
+a^{-1} = \tfrac{1}{\det a}\, \tilde a, \qquad x = \tfrac{1}{\det a}\, \tilde a b \ \ \text{(Cramer's rule).}
+\]
+\end{thm}
+
+\begin{exm}
+$\det \left(\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}\right) = ad - bc$ and
+$\left(\begin{smallmatrix} \alpha & \beta \\ \gamma & \delta \end{smallmatrix}\right)^{-1} = \frac{1}{\alpha\delta - \beta\gamma}\left(\begin{smallmatrix} \delta & -\beta \\ -\gamma & \alpha \end{smallmatrix}\right)$.
+\end{exm}
+
+\begin{prop}
+For a block triangular matrix $A = \left(\begin{smallmatrix} a & 0 \\ c & d \end{smallmatrix}\right)$ with square blocks $a, d$: $\det A = \det a \cdot \det d$.
+\end{prop}
+
+\begin{exm}[Vandermonde]
+$\det \left( \lambda_i^{\,j-1} \right)_{i,j=1..n} = \prod_{1 \le i < j \le n} (\lambda_j - \lambda_i)$; in particular it vanishes iff two $\lambda_i$ coincide.
+\end{exm}
+
+% ======================================================================
+\section{Permutations \& the Leibniz Formula}
+% ======================================================================
+
+\begin{defn}[Symmetric group]
+$\Sym_n$ = bijections $\sigma: \set{1, \dots, n} \to \set{1, \dots, n}$, with composition, is the \emph{symmetric group}. Cycles $(j_1\, j_2 \dots j_r)$ rotate their entries and fix the rest; cycles moving disjoint entries commute, and every permutation is a product of such cycles. Transpositions $(k\, l)$ swap two entries. $\abs{\Sym_n} = n!$.
+\end{defn}
+
+\begin{exm}
+$\Sym_3 = \set{1, (1\,2), (1\,3), (2\,3), (1\,2\,3), (1\,3\,2)}$; the permutation matrix of $(k\, l)$ is the elementary matrix $p_{kl}$.
+\end{exm}
+
+\begin{defn}[Signum]
+Every $\sigma$ is a product of transpositions, and the parity of the number of factors is well defined; $\sgn \sigma \deq (-1)^{\sigma} \in \set{\pm 1}$ is $+1$ for an \emph{even}, $-1$ for an \emph{odd} permutation. The map $\sgn: \Sym_n \to \set{\pm 1}$ is a group homomorphism.
+\end{defn}
+
+\begin{thm}[Leibniz formula]
+\[
+\det a = \sum_{\sigma \in \Sym_n} \sgn(\sigma)\, a_{1,\sigma(1)} a_{2,\sigma(2)} \cdots a_{n,\sigma(n)} .
+\]
+Of theoretical value ($n!$ terms); for computations use elimination or Laplace expansion.
+\end{thm}
+
+% ======================================================================
+\section{Real \& Complex Vector Spaces}
+% ======================================================================
+
+\begin{prop}[Realification]
+A complex vector space $V$ becomes a real one $V_{\R}$ by restricting scalars; multiplication by $\mathrm{i}$ is then a \emph{linear map} $h: V_{\R} \to V_{\R}$ with $h^2 = -\id$. For $v_1, \dots, v_r \in V$:
+\[
+\Lin_{\C}(v_1, \dots, v_r) = \Lin_{\R}(v_1, \dots, v_r, \mathrm{i}v_1, \dots, \mathrm{i}v_r),
+\]
+$(v_1,\dots,v_r)$ is $\C$-independent iff $(v_1, \dots, v_r, \mathrm{i}v_1, \dots, \mathrm{i}v_r)$ is $\R$-independent; hence $\dim_{\R} V = 2 \dim_{\C} V$ for finite-dimensional $V$.
+\end{prop}
+
+\begin{lem}
+If $c = a + \mathrm{i}b \in \Mat(n \times n, \C)$ ($a, b$ real) describes $f: \C^n \to \C^n$, then the realified map $f_{\R}$ is described by the real block matrix
+\[
+c_{\R} = \begin{pmatrix} a & -b \\ b & a \end{pmatrix} \in \Mat(2n \times 2n, \R)
+\]
+with respect to the basis $(v_1, \dots, v_n, \mathrm{i}v_1, \dots, \mathrm{i}v_n)$.
+\end{lem}
+
+\begin{defn}[Complexification]
+For a real vector space $V$, the \emph{complexification} $V_{\C}$ is $V \times V$ with componentwise addition and
+\[
+(\alpha + \mathrm{i}\mu)(u, v) \deq (\alpha u - \mu v,\ \mu u + \alpha v).
+\]
+Identifying $u \equiv (u, 0)$ gives $V_{\C} = V \dsum \mathrm{i}V$.
+\end{defn}
+
+\begin{lem}
+Every basis of $V$ is a basis of $V_{\C}$ (over $\C$); $(v_1, \dots, v_r)$ is independent in $V$ iff independent in $V_{\C}$; $\dim_{\C} V_{\C} = \dim_{\R} V$. Example: $C^k(I, \C)$ is the complexification of $C^k(I, \R)$.
+\end{lem}
+
+\begin{prop}[Real solutions from complex ones]
+Let $D$ be a linear differential operator (or any real map) and $f = u + \mathrm{i}v$ a complex solution with real $u, v$. Then $u$ and $v$ are real solutions; if $c = \alpha + \mathrm{i}\beta$ is a non-real root of a real characteristic polynomial, so is $\bar c$, and
+\[
+e^{ct} = e^{\alpha t}(\cos \beta t + \mathrm{i} \sin \beta t)
+\]
+yields the real basis solutions $e^{\alpha t}\cos \beta t$ and $e^{\alpha t}\sin \beta t$.
+\end{prop}
+
+% ======================================================================
+\section{Eigenvalues \& Diagonalization}
+% ======================================================================
+
+\begin{defn}[Endomorphism]
+Linear maps $f: V \to V$ are called \emph{endomorphisms} ($\End(V)$); bijective ones \emph{automorphisms} ($\Aut(V)$).
+\end{defn}
+
+\begin{defn}[Eigenvalues]
+$\lambda \in K$ is an \emph{eigenvalue} of $f \in \End(V)$ if some $v \neq 0$ has $f(v) = \lambda v$; such $v$ is an \emph{eigenvector}. The \emph{eigenspace}
+\[
+E_{\lambda} = \set{v \in V \mid f(v) = \lambda v} = \ker(f - \lambda \id)
+\]
+is a subspace containing $0$ (which does not count as an eigenvector).
+\end{defn}
+
+\begin{defn}[Characteristic polynomial]
+For $a \in \Mat(n \times n, K)$:
+\[
+\Char_a(X) \deq \det(X \one - a) \in K[X]
+\]
+is monic of degree $n$. Writing $\Char_a = X^n + c_{n-1}X^{n-1} + \dots + c_0$:
+\[
+c_0 = (-1)^n \det a, \qquad -c_{n-1} = \sum_{j=1}^n a_{jj} \deq \tr a .
+\]
+\end{defn}
+
+\begin{lem}
+$\Char_a$ does not depend on the basis: if $a, b$ describe the same $f \in \End(V)$ in different bases, $\Char_a = \Char_b$. Thus $\det f$, $\tr f$, $\Char_f$ are well defined for endomorphisms of finite-dimensional spaces.
+\end{lem}
+
+\begin{thm}
+$\lambda \in K$ is an eigenvalue of $f$ iff $\Char_f(\lambda) = 0$: the eigenvalues are the roots of the characteristic polynomial (in $K$; complex roots may not exist over $K = \R$).
+\end{thm}
+
+\begin{exm}
+$a = \left(\begin{smallmatrix} 1 & 2 \\ 4 & 3 \end{smallmatrix}\right)$: $\Char_a = (X-1)(X-3) - 8 = (X+1)(X-5)$, eigenvalues $-1$ and $5$. The rotation $a = \left(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\right)$ has $\Char_a = X^2 + 1$: no real eigenvalues; after complexification $\C^2$ splits into eigenspaces for $\mathrm{i}$ and $-\mathrm{i}$.
+\end{exm}
+
+\begin{thm}[Eigenspaces are independent]
+Eigenvectors belonging to pairwise distinct eigenvalues are linearly independent; equivalently the sum $E_{\lambda_1} + \dots + E_{\lambda_r}$ of eigenspaces for distinct eigenvalues is direct.
+\begin{proofsketch}
+Induction on $r$: apply $f$ to and subtract $\lambda_r$ times a dependence relation, then use independence of the first $r-1$ eigenvectors.
+\end{proofsketch}
+\end{thm}
+
+\begin{defn}[Diagonalizable]
+$f$ is \emph{diagonalizable} if $V$ is the (direct) sum of the eigenspaces of $f$. Choosing a basis of eigenvectors (\emph{eigenbasis}), $f$ is described by the diagonal matrix $\operatorname{diag}(\lambda_1, \dots, \lambda_n)$ --- each basis vector is merely scaled.
+\end{defn}
+
+\begin{thm}[Trace and determinant via eigenvalues]
+If $\Char_f$ splits into linear factors, $\Char_f(X) = \prod_{j=1}^n (X - \lambda_j)$, then
+\[
+\tr f = \sum_{j=1}^n \lambda_j, \qquad \det f = \prod_{j=1}^n \lambda_j .
+\]
+\end{thm}
+
+\begin{thm}[Triangular form]
+If $\Char_f$ splits into linear factors, there is a basis with respect to which $f$ is described by an upper triangular matrix; the diagonal entries are the eigenvalues (with multiplicity). Conceptually: there is a \emph{flag} $\set{0} = V_0 \subset V_1 \subset \dots \subset V_n = V$, $\dim V_k = k$, invariant under $f$.
+\begin{proofsketch}
+Induction on $n$: pick an eigenvector $v_1$, extend to a basis, and apply the induction hypothesis to the induced endomorphism of $V / \Lin(v_1)$.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Multiplicities]
+If $\lambda$ is a root of $\Char_f$ of multiplicity $e > 0$ (algebraic multiplicity), then $1 \le \dim E_{\lambda} \le e$ (geometric multiplicity).
+\end{thm}
+
+\begin{cor}
+If $\Char_f$ splits into $n$ \emph{distinct} linear factors, $f$ is diagonalizable. If $f$ is diagonalizable, its invariant subspaces are exactly the sums $U_1 \dsum \dots \dsum U_r$ with $U_i \subseteq E_{\lambda_i}$.
+\end{cor}
+
+\begin{exm}
+A diagonalizable $f$ with only non-negative eigenvalues has a commuting square root: on an eigenbasis set $h(v_j) = \sqrt{\lambda_j}\, v_j$; then $h \comp h = f$ and $h \comp f = f \comp h$.
+\end{exm}
+
+\begin{rem}[Nilpotent endomorphisms]
+For $f \in \End(V)$, $\dim V < \oo$, the following are equivalent: $f$ is nilpotent (some $f^r = 0$); $0$ is the only eigenvalue; some basis describes $f$ by a strictly upper triangular matrix.
+\end{rem}
+
+% ======================================================================
+\section{Euclidean Vector Spaces}
+% ======================================================================
+
+\begin{defn}[Symmetric bilinear form]
+A map $\ip{\cdot}{\cdot}: V \times V \to K$ that is linear in each variable and symmetric is a \emph{symmetric bilinear form}. Every symmetric matrix $s \in \Sym(n,K)$ ($s^t = s$) defines one on $K^n$ via $\ip{x}{y} = x^t s y$, and on a general $V$ every basis identifies forms with symmetric matrices.
+\end{defn}
+
+\begin{defn}[Inner product, Euclidean space]
+A symmetric bilinear form on a \emph{real} space $V$ is an \emph{inner product} (Skalarprodukt) if it is positive definite: $\ip{v}{v} > 0$ for $v \neq 0$. A real space with inner product is a \emph{Euclidean vector space}; the \emph{norm} is $\norm{v} \deq \sqrt{\ip{v}{v}}$.
+\end{defn}
+
+\begin{thm}[Cauchy--Schwarz inequality]
+\[
+\abs{\ip{v}{w}} \le \norm{v} \cdot \norm{w},
+\]
+with equality iff $v, w$ are linearly dependent.
+\begin{proofsketch}
+For $w \neq 0$ set $\lambda \deq \ip{v}{w}/\ip{w}{w}$ and expand $0 \le \ip{v - \lambda w}{v - \lambda w}$.
+\end{proofsketch}
+\end{thm}
+
+\begin{cor}[Norm properties]
+$\norm{v} \ge 0$, $\norm{v} = 0 \Leftrightarrow v = 0$; $\norm{\alpha v} = \abs{\alpha}\norm{v}$; triangle inequality $\norm{v \pm w} \le \norm{v} + \norm{w}$.
+\end{cor}
+
+\begin{exm}
+The standard inner product on $\R^n$: $\ip{x}{y} = x^t y = \sum_j x_j y_j$ (matrix $\one$). Unless stated otherwise, $\R^n$ carries this product.
+\end{exm}
+
+\begin{defn}[Angle, orthogonality]
+For $v, w \neq 0$ the angle between them is $t = \arccos \frac{\ip{v}{w}}{\norm{v}\norm{w}} \in [0, \pi]$. Vectors are \emph{orthogonal} ($v \perp w$) if $\ip{v}{w} = 0$ (the zero vector is orthogonal to everything). A tuple $(v_1, \dots, v_r)$ is an \emph{orthonormal system} if $\ip{v_j}{v_k} = \delta_{jk}$.
+\end{defn}
+
+\begin{lem}
+Every orthonormal system is linearly independent. If $(v_1, \dots, v_n)$ is an \emph{orthonormal basis} (ONB), every $v \in V$ has the Fourier expansion
+\[
+v = \sum_{j=1}^n \ip{v_j}{v}\, v_j .
+\]
+\end{lem}
+
+\begin{thm}[Gram--Schmidt orthonormalization]
+Let $\set{0} = V_0 \subset V_1 \subset \dots \subset V_n = V$ be a flag and $(v_1, \dots, v_r)$ an orthonormal tuple with $\Lin(v_1, \dots, v_k) = V_k$ for $k \le r$. It extends to an ONB with $\Lin(v_1, \dots, v_k) = V_k$ for all $k$. Practically, given any basis $(w_1, \dots, w_n)$, replace iteratively
+\[
+v_k \deq \frac{w_k - \sum_{j<k} \ip{v_j}{w_k} v_j}{\norm{w_k - \sum_{j<k} \ip{v_j}{w_k} v_j}} .
+\]
+\end{thm}
+
+\begin{cor}
+Every finite-dimensional Euclidean space has an ONB.
+\end{cor}
+
+\begin{defn}[Isometry]
+A linear $f: V \to W$ between Euclidean spaces is an \emph{isometry} if $\ip{f(v)}{f(w)} = \ip{v}{w}$ for all $v, w$. Isometries are injective; $f$ is an isometry iff it sends some (every) ONB of $V$ to an orthonormal system of $W$. Hence every $n$-dimensional Euclidean space is isometric to the standard $\R^n$: $\R^n$ is the standard model.
+\end{defn}
+
+% ======================================================================
+\section{Orthogonal Maps \& Complements}
+% ======================================================================
+
+\begin{defn}
+An isometric automorphism of a Euclidean space $V$ is an \emph{orthogonal map}; these form the \emph{orthogonal group} $\On(V) \subseteq \GL(V)$, written $\On(n)$ for $\R^n$. Orthogonal maps preserve lengths and angles.
+\end{defn}
+
+\begin{prop}[Characterizations]
+For $u \in \Mat(n \times n, \R)$ equivalent: $u$ is orthogonal; the columns of $u$ form an orthonormal system; $u^t u = \one$; $u$ is invertible with $u^{-1} = u^t$; $u u^t = \one$; the rows form an orthonormal system.
+\end{prop}
+
+\begin{defn}
+The \emph{special orthogonal group} is $\SOn(n) = \set{u \in \On(n) \mid \det u = 1} = \On(n) \cap \SLgrp(n,\R)$; the orthogonal matrices with $\det = -1$ do not form a group.
+\end{defn}
+
+\begin{exm}
+$\SOn(2)$ consists exactly of the rotation matrices
+\[
+\begin{pmatrix} \cos t & -\sin t \\ \sin t & \cos t \end{pmatrix}, \qquad t \in \R .
+\]
+\end{exm}
+
+\begin{defn}[Orthogonal complement]
+For a subspace $U$ of a Euclidean space $V$:
+\[
+U^{\bot} \deq \set{v \in V \mid \ip{v}{u} = 0 \text{ for all } u \in U}.
+\]
+\end{defn}
+
+\begin{thm}
+For finite-dimensional $V$ and subspaces $S, T, U$:
+\begin{itemize}
+\item $U^{\bot}$ is a complement of $U$: $U \cap U^{\bot} = \set{0}$, $U + U^{\bot} = V$, hence $\dim U + \dim U^{\bot} = \dim V$;
+\item $U^{\bot\bot} = U$;
+\item $(S + T)^{\bot} = S^{\bot} \cap T^{\bot}$ and $(S \cap T)^{\bot} = S^{\bot} + T^{\bot}$.
+\end{itemize}
+\end{thm}
+
+\begin{lem}
+If the subspaces $U_1, \dots, U_r$ are pairwise orthogonal ($\ip{u_i}{u_j} = 0$ for $u_i \in U_i$, $u_j \in U_j$, $i \neq j$), their sum is direct.
+\begin{proofsketch}
+Take the inner product of a dependence $\sum u_j = 0$ with $u_i$.
+\end{proofsketch}
+\end{lem}
+
+\begin{thm}[Rotations of space have an axis]
+Every $u \in \SOn(3)$ has a fixed vector $a \in \R^3 \setminus \set{0}$ (eigenvalue $1$): $u$ is a rotation about the axis $\R a$.
+\begin{proofsketch}
+$\det u = 1$ is the product of the (real or conjugate-complex) eigenvalues; an odd-degree real polynomial has a real root, and a conjugate pair would contribute product $\abs{\lambda}^2 = 1$ leaving the third root equal to $1$.
+\end{proofsketch}
+\end{thm}
+
+\begin{rem}[Orthogonal projection]
+For a subspace $U$ with ONB $(v_1, \dots, v_r)$, the map $p_U(v) \deq \sum_j \ip{v_j}{v} v_j$ is the \emph{orthogonal projection} onto $U$: $p_U^2 = p_U$, $\img p_U = U$, $\ker p_U = U^{\bot}$, and $p_U(v)$ is the point of $U$ closest to $v$.
+\end{rem}
+
+% ======================================================================
+\section{Dual Spaces \& Adjoints}
+% ======================================================================
+
+\begin{defn}[Dual space]
+$V^{*} \deq \Hom(V, K) = \set{\text{linear } \varphi: V \to K}$ with pointwise operations is the \emph{dual space}; its elements are \emph{linear forms} (functionals). With respect to a basis $u = (u_1, \dots, u_n)$, linear forms correspond to rows $z \in \Mat(1 \times n, K)$ via $\varphi(x) = z\, u^{-1}(x)$.
+\end{defn}
+
+\begin{defn}[Dual basis]
+The \emph{dual basis} $u^{*} = (u^{1}, \dots, u^{n})$ of $V^{*}$ is defined by $u^{i}(u_j) = \delta_{ij}$. If $z$ is the row of $\varphi$ in the basis $u$, then $z^t$ is the column of $\varphi$ in the dual basis $u^{*}$.
+\end{defn}
+
+\begin{defn}[Dual map]
+For linear $f: V \to W$ the \emph{dual map} $f^{*}: W^{*} \to V^{*}$ is $f^{*}(\varphi) = \varphi \comp f$. Rules: $\id^{*} = \id$, $(g \comp f)^{*} = f^{*} \comp g^{*}$ (order reversal); the matrix of $f^{*}$ in the dual bases is the transpose of the matrix of $f$.
+\end{defn}
+
+\begin{lem}[Bidual]
+The canonical map $V \to V^{**}$, $v \mapsto (\varphi \mapsto \varphi(v))$, is injective, and for finite-dimensional $V$ an isomorphism.
+\end{lem}
+
+\begin{defn}[Annihilator]
+For $A \subseteq V$, $\Psi \subseteq V^{*}$:
+{\footnotesize\[
+\begin{gathered}
+\Ann A \deq \set{\varphi \in V^{*} \mid \varphi(v) = 0 \ \forall v \in A},\\
+\Ann \Psi \deq \set{v \in V \mid \varphi(v) = 0 \ \forall \varphi \in \Psi} = \bigcap_{\varphi \in \Psi} \ker \varphi.
+\end{gathered}
+\]}
+\end{defn}
+
+\begin{lem}
+For finite-dimensional $V$: $\Ann A$ is a subspace depending only on $\Lin(A)$; for subspaces $U$:
+\[
+\dim U + \dim \Ann U = \dim V, \qquad \Ann \Ann U = U .
+\]
+\end{lem}
+
+\begin{prop}
+$\rk f^{*} = \rk f$ and (finite-dimensional case)
+\[
+\img f^{*} = \Ann \ker f, \qquad \ker f^{*} = \Ann \img f .
+\]
+\end{prop}
+
+\begin{exm}[Describing a span by equations]
+Given $U = \Lin(v_1, \dots, v_r) \subseteq K^n$, put the $v_j$ as columns into $a \in \Mat(n \times r, K)$ and solve $z a = 0$ for rows $z$; a basis $z_1, \dots, z_m$ of the solution space yields
+\[
+U = \set{x \in K^n \mid z_1 x = \dots = z_m x = 0}.
+\]
+\end{exm}
+
+\begin{thm}[Riesz isomorphism]
+For a Euclidean space $V$, the map $V \to V^{*}$, $v \mapsto \ip{v}{\cdot}$, is an isomorphism; its matrix with respect to a basis $u$ and the dual basis $u^{*}$ is the Gram matrix $s$ of the inner product.
+\end{thm}
+
+\begin{defn}[Adjoint map]
+For linear $f: V \to W$ between Euclidean spaces, the \emph{adjoint} $f^{\dagger}: W \to V$ is defined by
+\[
+\ip{f(v)}{w} = \ip{v}{f^{\dagger}(w)} \quad \text{for all } v \in V,\ w \in W .
+\]
+\end{defn}
+
+\begin{prop}[Rules for the adjoint]
+$\id^{\dagger} = \id$; $(g \comp f)^{\dagger} = f^{\dagger} \comp g^{\dagger}$; $(f^{\dagger})^{\dagger} = f$; $\rk f^{\dagger} = \rk f$;
+\[
+\img f^{\dagger} = (\ker f)^{\bot}, \qquad \ker f^{\dagger} = (\img f)^{\bot},
+\]
+so that $V = \ker f \dsum \img f^{\dagger}$ and $W = \img f \dsum \ker f^{\dagger}$ are orthogonal decompositions.
+\end{prop}
+
+\begin{defn}[Hermitian forms, unitary spaces]
+On a complex space, a \emph{Hermitian form} $\ip{\cdot}{\cdot}: V \times V \to \C$ is linear in the second and conjugate-linear in the first variable, with $\ip{v}{w} = \overline{\ip{w}{v}}$. The standard example on $\C^n$ is $\ip{w}{z} = \overline{w}^{t} z$. A positive definite Hermitian form makes $V$ a \emph{unitary space}; matrices representing it satisfy $\bar s^t = s$.
+\end{defn}
+
+% ======================================================================
+\section{Normal Endomorphisms \& Spectral Theorems}
+% ======================================================================
+
+\begin{defn}[Normal]
+An endomorphism $f$ of a Euclidean or unitary space is \emph{normal} if it commutes with its adjoint: $f \comp f^{\dagger} = f^{\dagger} \comp f$.
+\end{defn}
+
+\begin{rem}[Dictionary]
+For $f \in \End(V)$, complex $c \in \Mat(n \times n, \C)$, real $a \in \Mat(n \times n, \R)$:
+\begin{itemize}
+\item self-adjoint $f^{\dagger} = f$ --- hermitian $\bar c^t = c$ --- symmetric $a^t = a$;
+\item anti-self-adjoint $f^{\dagger} = -f$ --- skew-hermitian $\bar c^t = -c$ --- skew-symmetric $a^t = -a$;
+\item unitary/orthogonal $f^{\dagger} = f^{-1}$ --- unitary $\bar c^t c = \one$ --- orthogonal $a^t a = \one$.
+\end{itemize}
+All these types are normal.
+\end{rem}
+
+\begin{thm}[Spectral theorem, unitary case]
+Let $V$ be a finite-dimensional unitary space and $f$ normal. Then $V$ has an orthonormal basis of eigenvectors of $f$; i.e.\ $f$ is described by a diagonal matrix in a suitable ONB. Conversely, any endomorphism diagonalizable by an ONB is normal.
+\begin{proofsketch}
+Induction on $n$: a normal $f$ has an eigenvector $v$ (a root of $\Char_f$ exists over $\C$); its orthogonal complement is invariant under both $f$ and $f^{\dagger}$, and $f$ stays normal there. Key lemma: a normal \emph{triangular} matrix is already diagonal, as comparing the diagonal of $c^*c$ and $cc^*$ shows.
+\end{proofsketch}
+\end{thm}
+
+\begin{lem}
+For normal $f$: eigenvectors belonging to distinct eigenvalues are orthogonal.
+\end{lem}
+
+\begin{thm}[Spectral characterization]
+For normal $f$ on a finite-dimensional unitary space:
+\begin{itemize}
+\item $f$ self-adjoint $\iff$ all eigenvalues of $f$ are real;
+\item $f$ anti-self-adjoint $\iff$ all eigenvalues are purely imaginary;
+\item $f$ unitary $\iff$ $\abs{\lambda} = 1$ for every eigenvalue.
+\end{itemize}
+\end{thm}
+
+\begin{thm}[Spectral theorem, real symmetric case]
+Let $V$ be a finite-dimensional Euclidean space and $f$ self-adjoint ($f^{\dagger} = f$; symmetric matrix model). Then $V$ has an ONB of eigenvectors of $f$ with \emph{real} eigenvalues; a real symmetric matrix is diagonalizable by an orthogonal matrix: $u^{-1} a u = u^t a u$ diagonal.
+\end{thm}
+
+\begin{thm}[Normal form of orthogonal maps]
+For an orthogonal $f$ on an $n$-dimensional Euclidean space there is an ONB in which $f$ is described by a block diagonal matrix with blocks
+\[
+\begin{pmatrix} \cos t & -\sin t \\ \sin t & \cos t \end{pmatrix} \quad (t \neq 0), \text{ and diagonal entries } \pm 1 .
+\]
+\end{thm}
+
+\begin{thm}[Simultaneous diagonalization]
+Any family $\mathcal{F}$ of pairwise commuting normal endomorphisms of a finite-dimensional unitary space can be diagonalized simultaneously: there is one ONB of common eigenvectors.
+\end{thm}
+
+\begin{cor}
+A real symmetric matrix with $a^r = 0$ for some $r$ is zero.
+\end{cor}
+
+\begin{thm}
+If the complex endomorphism $f$ satisfies $f^r = \id$ for some $r$, then $f$ is diagonalizable (over $\C$).
+\begin{proofsketch}
+Make $V$ unitary with $\ip{v}{w}' \deq \sum_{j<r} \ip{f^{j}v}{f^{j}w}$; then $f$ is unitary, hence normal, and $X^r - 1$ has simple roots.
+\end{proofsketch}
+\end{thm}
+
+% ======================================================================
+\section{Quadratic Forms}
+% ======================================================================
+
+\begin{defn}
+A \emph{quadratic form} on a real vector space is a map $q(x) = \ip{x}{x} = x^t s x$ given by a symmetric bilinear form ($s \in \Sym(n, \R)$ after a choice of basis). $q$ is \emph{positive definite} if $\ip{\cdot}{\cdot}$ is.
+\end{defn}
+
+\begin{thm}[Principal axes]
+For every quadratic form on an $n$-dimensional Euclidean space there is an ONB in which
+\[
+q(x) = \lambda_1 x_1^2 + \dots + \lambda_n x_n^2
+\]
+with real $\lambda_j$ (diagonalize the symmetric matrix via the real spectral theorem).
+\end{thm}
+
+\begin{thm}[Sylvester's law of inertia]
+There is a basis (not orthonormal, in general) in which
+\[
+q(x) = x_1^2 + \dots + x_{r_+}^2 - x_{r_+ + 1}^2 - \dots - x_{r_+ + r_-}^2 .
+\]
+The pair $(r_+, r_-)$, the \emph{signature}, does not depend on the basis; $r_+$ is the maximal dimension of a subspace on which $q$ is positive definite, $r_-$ the same for negative definite subspaces; $r_+ + r_- = \rk q$.
+\end{thm}
+
+\begin{prop}[Practical computation]
+Apply to $s$ any elementary row operation together with the matching column operation; the result $u^t s u$ again represents $q$ (in a new basis). Continuing like the Gaussian algorithm (scaling steps, not dividing by $0$) yields the signature.
+\begin{proofsketch}
+Each double step is composition with an elementary matrix: row $\leftrightarrow$ left multiplication, matching column $\leftrightarrow$ right multiplication by its transpose.
+\end{proofsketch}
+\end{prop}
+
+\begin{exm}
+For
+\[
+s = \begin{pmatrix} -4 & 2 & 2 \\ 2 & -1 & 0 \\ 2 & 0 & -1 \end{pmatrix}
+\]
+the first double step $u_{21}(\tfrac12)u_{31}(\tfrac12)$ (row, then the same on columns) clears the first row and column except the corner; continuing yields signature $(1, 2)$. Caution: all diagonal entries being negative does \emph{not} imply negative definiteness.
+\end{exm}
+
+\begin{prop}[Sylvester criterion]
+$s \in \Sym(n,\R)$ is positive definite iff all \emph{leading principal minors} $\det(s_{ij})_{1 \le i,j \le k}$, $k = 1, \dots, n$, are positive.
+\end{prop}
+
+\begin{defn}[Minkowski space]
+A symmetric bilinear form of signature $(1, n)$ on an $(n+1)$-dimensional real space is a \emph{Minkowski product}; in suitable coordinates $\ip{x}{x} = x_0^2 - x_1^2 - \dots - x_n^2$. Its isometry group is the Lorentz group $\On(1,n)$; vectors with positive ``length squared'' are timelike.
+\end{defn}
+
+% ======================================================================
+\section{Quick Reference: Matrix Types \& Groups}
+% ======================================================================
+
+\begin{itemize}
+\item \emph{Symmetric} $a^t = a$: real eigenvalues, ONB of eigenvectors. \emph{Skew-symmetric} $a^t = -a$: purely imaginary eigenvalues, $0$ if $n$ is odd.
+\item \emph{Orthogonal} $u^t u = \one$: eigenvalues of modulus $1$, $\det u = \pm 1$, $u^{-1} = u^t$; \emph{rotation} if $\det = +1$.
+\item \emph{Hermitian} $\bar c^t = c$, \emph{unitary} $\bar c^t c = \one$, \emph{normal} $\bar c^t c = c \bar c^t$: all diagonalizable by a unitary ONB (spectral theorem).
+\item \emph{Triangular}: eigenvalues = diagonal entries. \emph{Nilpotent} $a^r = 0$: only eigenvalue $0$, strictly triangularizable. \emph{Idempotent} $p^2 = p$: projection onto $\img p$ along $\ker p$; an orthogonal projection iff $p^2 = p = p^t$.
+\item Groups: $\GL(n,K) \supseteq \SLgrp(n,K) = \ker \det$; $\On(n) \supseteq \SOn(n)$; $\Sym_n$ with $\sgn: \Sym_n \to \set{\pm 1}$; $\det: \GL(n,K) \to K^{\times}$ is a homomorphism.
+\item Ranks: $\rk a = \dim$ of column span $= \rk a^t$; $\dim \ker f + \rk f = \dim V$; $\rk(g \comp f) \le \min\set{\rk f, \rk g}$.
+\item Dimensions: $\dim(S + T) + \dim(S \cap T) = \dim S + \dim T$; $\dim U + \dim U^{\bot} = \dim V$; $\dim U + \dim \Ann U = \dim V$.
+\end{itemize}
+
+\end{multicols*}
+
+\end{document}
