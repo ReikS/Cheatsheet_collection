@@ -1,0 +1,886 @@
+% ======================================================================
+%  Analysis 2 Cheatsheet (multivariable real analysis: continuity,
+%  integration, differentiation, submanifolds, differential forms,
+%  Taylor, Morse theory)
+%  Self-contained: compile with pdflatex (two runs).
+%  Anonymous: no author names.
+% ======================================================================
+\documentclass[10pt,a4paper,landscape]{article}
+
+% ---------- packages ----------
+\usepackage[landscape,margin=1.1cm,top=1.0cm,bottom=1.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+
+% ---------- colors ----------
+\definecolor{defblue}{RGB}{20,60,120}
+\definecolor{thmgreen}{RGB}{0,100,60}
+\definecolor{exgray}{RGB}{90,90,90}
+\definecolor{boxbg}{RGB}{245,247,250}
+\definecolor{headbg}{RGB}{30,50,80}
+
+% ---------- theorem environments ----------
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{exm}{Example}[section]
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{cor}{Corollary}[section]
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+
+% ---------- math shortcuts ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\re}{\operatorname{Re}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\oo}{\infty}
+\newcommand{\deq}{\coloneqq}
+\newcommand{\comp}{\circ}
+\newcommand{\inv}{^{-1}}
+\newcommand{\restr}[2]{#1|_{#2}}
+\newcommand{\One}[1]{\mathbf{1}_{#1}}
+\DeclareMathOperator{\Alt}{Alt}
+\DeclareMathOperator{\Vect}{Vect}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\Ddiv}{div}
+\DeclareMathOperator{\rk}{rk}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Mat}{Mat}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Lin}{Lin}
+\newcommand{\ip}[2]{\langle #1,\, #2 \rangle}
+
+% ---------- compact layout ----------
+\setlist{nosep,leftmargin=1.1em,itemsep=0.5pt,topsep=1pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{1.5pt}
+\setlength{\belowdisplayshortskip}{1.5pt}
+\setlength{\columnsep}{14pt}
+\setlength{\columnseprule}{0.3pt}
+
+% ---------- headers/footers ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{headbg}\textbf{Analysis 2 Cheatsheet}}
+\fancyhead[R]{\footnotesize\color{headbg}Continuity, Compactness, Integration, Fubini, Differentiation, Inverse \& Implicit Functions, Submanifolds, Tangent Spaces, Differential Forms, Stokes, Taylor, Morse}
+\fancyfoot[C]{\footnotesize\color{exgray}Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.2pt}
+
+% ---------- section styling ----------
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}[{\color{headbg}\titlerule[0.6pt]}]
+\titlespacing{\section}{0pt}{6pt}{3pt}
+\titleformat{\subsection}{\normalsize\bfseries\color{defblue}}{\thesubsection}{0.5em}{}
+\titlespacing{\subsection}{0pt}{4pt}{2pt}
+
+% ---------- proof sketch ----------
+\newenvironment{proofsketch}{%
+  \par\small\color{exgray}\textbf{Sketch.}\ }%
+  {\par}
+
+\begin{document}
+
+\begin{multicols*}{3}
+
+% ======================================================================
+\section{Continuous Functions in Several Variables}
+% ======================================================================
+
+\begin{defn}[Continuity]
+For $X \subseteq \R^n$, $Y \subseteq \R^p$ and $f: X \to Y$, $f$ is \emph{continuous at} $a \in X$ if for every $\eps > 0$ there is $\delta > 0$ with
+\[
+\abs{f(x) - f(a)} < \eps \quad \text{for all } x \in X \text{ with } \abs{x - a} < \delta,
+\]
+where $\abs{x} = \sqrt{\sum_{j=1}^n x_j^2}$ is the Euclidean norm. Everything that survived the step from $\R$ to $\C = \R^2$ (sequences, series, limit rules) survives the step to $\R^n$.
+\end{defn}
+
+\begin{exm}
+$f(x,y) = \frac{xy}{x^2+y^2}$ (and $0$ at the origin) is discontinuous at $(0,0)$ although every section $x \mapsto f(x,b)$, $y \mapsto f(a,y)$ is continuous: separate continuity does not imply continuity.
+\end{exm}
+
+\begin{defn}[Balls, spheres, open and closed sets]
+$U_\eps(a) = \set{x \mid \abs{x-a} < \eps}$ (open ball), $D_\eps(a)$ (closed ball), $S_\eps(a)$ (sphere). $U \subseteq \R^n$ is \emph{open} if every $a \in U$ has some $U_\eps(a) \subseteq U$; $F$ is \emph{closed} if $\R^n \setminus F$ is open. $U \subseteq X$ is \emph{relatively open in} $X$ if $U = V \cap X$ for an open $V$; dually for relatively closed.
+\end{defn}
+
+\begin{prop}
+$\emptyset$ and $X$ are relatively open and closed in $X$; finite intersections and arbitrary unions of (relatively) open sets are open; dually for closed sets.
+\end{prop}
+
+\begin{thm}[Global description of continuity]
+For $f: X \to Y$ equivalent:
+\begin{itemize}
+\item $f$ is continuous;
+\item $f^{-1}(V)$ is open in $X$ for every (relatively) open $V \subseteq Y$;
+\item $f^{-1}(G)$ is closed in $X$ for every closed $G \subseteq Y$.
+\end{itemize}
+\end{thm}
+
+\begin{exm}
+Closed balls and spheres are closed ($D_\eps(a) = f^{-1}[0,\eps]$ for $f(x) = \abs{x-a}$); affine subspaces are closed (fibres of continuous linear maps); intervals are the open (resp.\ closed) subsets of $\R$ in the old sense.
+\end{exm}
+
+\begin{lem}[Sequential description]
+$X$ is closed iff every sequence in $X$ that converges in $\R^n$ has its limit in $X$.
+\end{lem}
+
+\begin{defn}[Compactness]
+$X \subseteq \R^n$ is \emph{compact} if every sequence in $X$ contains a subsequence that converges in $X$ (to a point of $X$).
+\end{defn}
+
+\begin{thm}[Continuous images of compact sets]
+If $X$ is compact and $f: X \to \R^p$ continuous, then $f(X)$ is compact.
+\begin{proofsketch}
+Lift a sequence in $f(X)$ to $X$, extract a convergent subsequence there, and use continuity.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Heine--Borel]
+$X \subseteq \R^n$ is compact iff it is closed and bounded.
+\begin{proofsketch}
+Compact $\Rightarrow$ closed: limits of convergent sequences lie in $X$; bounded: else $\abs{x_j} > j$ has no convergent subsequence. Conversely, bounded sequences have convergent subsequences (Bolzano--Weierstrass), and closedness brings the limit into $X$.
+\end{proofsketch}
+\end{thm}
+
+\begin{lem}
+Every nonempty compact subset of $\R$ has a smallest and a largest element ($\sup X, \inf X \in X$). Hence a continuous real function on a compact set attains a minimum and a maximum.
+\end{lem}
+
+\begin{defn}[Path-connectedness]
+$X \subseteq \R^n$ is \emph{path-connected} if any $a, b \in X$ can be joined by a continuous path $\gamma: [0,1] \to X$ with $\gamma(0) = a$, $\gamma(1) = b$. Balls (open or closed) and spheres of positive dimension are path-connected.
+\end{defn}
+
+\begin{lem}
+Continuous images of path-connected sets are path-connected; the path-connected subsets of $\R$ are exactly the intervals.
+\end{lem}
+
+\begin{exm}
+Every quadratic form $q: \R^n \to \R$ is continuous, so $q(S^{n-1})$ is a compact interval $[c,d]$: $q$ attains on the unit sphere a minimum $c$ and a maximum $d$ and everything in between. Since $q(x) = r^2 q(x/r)$ on rays, $q$ is positive definite iff $c > 0$; by the principal axis theorem $c$ and $d$ are the smallest and largest eigenvalues of $q$.
+\end{exm}
+
+\begin{thm}[Inverse maps]
+If $X$ is compact and $f: X \to Y$ continuous and bijective, then $f^{-1}: Y \to X$ is continuous.
+\end{thm}
+
+% ======================================================================
+\section{Null Sets \& the One-Dimensional Integral}
+% ======================================================================
+
+\begin{defn}[Null set]
+$X \subseteq \R^n$ is a \emph{null set} if for every $\eps > 0$ there is a sequence of rectangles (boxes) $(Q_j)$ with
+\[
+X \subseteq \textstyle\bigcup_{j=0}^{\oo} Q_j \quad \text{and} \quad \sum_{j=0}^{\oo} \mu(Q_j) < \eps .
+\]
+\end{defn}
+
+\begin{lem}
+Every subset of a null set is a null set; countable unions of null sets are null sets.
+\end{lem}
+
+\begin{exm}
+For $n > 0$ every countable subset of $\R^n$ is a null set (so $\Q$ is one); the coordinate hyperplane $\R^{n-1} \times \set{0}$ and, more generally, every proper affine subspace of $\R^n$ is a null set.
+\end{exm}
+
+\begin{defn}[Extension by zero, integrability]
+For $f: X \to \R$ let $f_X: \R^n \to \R$ be $f$ on $X$ and $0$ elsewhere. The $n$-dimensional integral is a linear functional $f \mapsto \int f$ on a vector space $L^1(\R^n)$ of \emph{integrable} functions, with:
+\begin{itemize}
+\item if $f \in L^1$ then $f \cdot \One{\set{g > 0}} \in L^1$ for $g \in L^1$;
+\item $f \ge 0 \Rightarrow \int f \ge 0$ (monotonicity in particular);
+\item if $X$ is compact and $f: X \to \R$ continuous then $f_X \in L^1$;
+\item for a compact box $Q$: $\int \One{Q} = \mu(Q)$ (its volume);
+\item if $X$ is a null set, then $f_X \in L^1$ and $\int f_X = 0$ for \emph{every} $f: X \to \R$.
+\end{itemize}
+Statements hold ``almost everywhere'' (a.e.) if they fail only on a null set.
+\end{defn}
+
+\begin{prop}[Triangle inequality, positive/negative part]
+With $f = f^+ - f^-$ and $\abs{f} = f^+ + f^-$ (where $f^+ = \max(f,0) \ge 0$): for $f \in L^1(\R^n)$ also $\abs{f} \in L^1$ and
+\[
+\abs{\textstyle\int f} \le \int \abs{f} .
+\]
+\end{prop}
+
+\begin{thm}[Mean value theorem for integrals]
+If $X$ is compact and path-connected and $f: X \to \R$ continuous, there is $t \in X$ with
+\[
+\int_X f = f(t) \cdot \textstyle\int_X 1 = f(t) \cdot \mu(X),
+\]
+where $\mu(X) = \int_X 1$ is the volume (measure) of $X$.
+\begin{proofsketch}
+$f(X)$ is a compact interval $[c,d]$; the quotient $\int_X f/\mu(X)$ lies in it.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Fundamental theorem of calculus]
+If $f: I \to \R$ is continuous and $a \in I$, then $x \mapsto \int_a^x f$ is an antiderivative: $\frac{\dd}{\dd x}\int_a^x f = f(x)$. Consequently, for an antiderivative $F$ of the continuous $f$ on $[a,b]$:
+\[
+\int_a^b f = F(b) - F(a) \qquad \text{(Newton--Leibniz).}
+\]
+\end{thm}
+
+\begin{prop}[Integration rules on ${[a,b]}$]
+\begin{itemize}
+\item Additivity: $\int_{(a,c)} f = \int_{(a,b)} f + \int_{(b,c)} f$ (up to null sets).
+\item Partial integration: $\int_a^b f' g = (fg)\bigl|_a^b - \int_a^b f g'$ for $f, g \in C^1$.
+\item Substitution: $\int_{\varphi(\alpha)}^{\varphi(\beta)} f(x) \dd x = \int_\alpha^\beta f(\varphi(t))\, \varphi'(t) \dd t$ for $\varphi \in C^1$; $\varphi$ need not be monotone.
+\end{itemize}
+\end{prop}
+
+\begin{exm}
+Linear substitution; $\int_0^{2\pi} f(\cos t)\sin t \dd t = 0$ by substituting $x = \cos t$. A rational function has locally $\log\abs{x - c}$ as an antiderivative of $1/(x-c)$; for complex poles combine conjugate terms to get real arctan and log expressions.
+\end{exm}
+
+% ======================================================================
+\section{Integral and Limit}
+% ======================================================================
+
+\begin{defn}[Integral seminorm]
+$\norm{f} \deq \int \abs{f} \in [0,\oo]$ for $f \in L^1(\R^n)$. Properties: $\norm{f} \ge 0$, $\norm{f} = 0 \iff f = 0$ a.e., $\norm{\alpha f} = \abs{\alpha}\norm{f}$, $\norm{f \pm g} \le \norm{f} + \norm{g}$.
+\end{defn}
+
+\begin{rem}
+Integral and limit are \emph{not} generally interchangeable: $f_j = \One{[j, j+1]}$ converges to $0$ pointwise but $\int f_j = 1$ for all $j$. The following theorems give the conditions under which exchange is allowed.
+\end{rem}
+
+\begin{thm}[Convergence axiom]
+For every Cauchy sequence $(f_j)$ in $L^1(\R^n)$: some subsequence converges pointwise a.e.; all a.e.\ limits agree a.e.\ and are integrable; and $\lim_j \norm{f_j - f} = 0$, i.e.\ $\lim_j \int f_j = \int f$.
+\end{thm}
+
+\begin{thm}[Monotone convergence]
+If $f_0 \le f_1 \le \cdots$ a.e.\ in $L^1$ and $(\int f_j)$ is bounded, then $(f_j)$ converges a.e.\ to some $f \in L^1$, and $\lim_j \int f_j = \int f$.
+\end{thm}
+
+\begin{thm}[Dominated convergence]
+If $f_j \to f$ a.e.\ pointwise, all $f_j \in L^1$, and $\abs{f_j} \le g$ a.e.\ for some $g \in L^1$, then $f \in L^1$ and
+\[
+\lim_j \int f_j = \int f .
+\]
+\end{thm}
+
+\begin{thm}[Exhaustion]
+If $X_0 \subseteq X_1 \subseteq \cdots$ with $\bigcup_j X_j = X$ and $f$ is integrable over every $X_j$, then $f$ is integrable over $X$ iff the increasing sequence $\int_{X_j} \abs{f}$ is bounded; then $\lim_j \int_{X_j} f = \int_X f$.
+\end{thm}
+
+\begin{thm}[Improper integrals]
+For open (possibly unbounded) $(a,b)$ and continuous $f$: $f$ is integrable over $(a,b)$ iff $\lim_{\substack{a' \to a \\ b' \to b}} \int_{a'}^{b'} \abs{f}$ exists; then $\int_{(a,b)} f$ equals that limit of $\int f$.
+\end{thm}
+
+\begin{exm}
+$\int_0^1 x^{-1/2}\dd x = 2$, but $x \mapsto x$ is not integrable over $\R$ even though $\int_{-r}^{r} x \dd x = 0$ (absolute integrability fails). The Gamma function $\Gamma(x) = \int_0^{\oo} t^{x-1} \e^{-t} \dd t$ is finite for $x > 0$ and satisfies $\Gamma(x+1) = x\,\Gamma(x)$, $\Gamma(k+1) = k!$.
+\end{exm}
+
+\begin{thm}[Parameter-dependent integrals]
+Let $X$ be open$\,\cap\,$closed (e.g.\ open or closed), $T \subseteq \R^p$ compact, $f: X \times T \to \R$ continuous. Then
+\[
+F: X \to \R, \quad F(x) \deq \int_T f(x,t) \dd t
+\]
+is continuous. If moreover $\frac{\partial f}{\partial x_j}$ exists and is continuous, then $F$ is differentiable with
+\[
+\frac{\partial F}{\partial x_j}(x) = \int_T \frac{\partial f}{\partial x_j}(x,t) \dd t .
+\]
+\end{thm}
+
+% ======================================================================
+\section{Measures, Fubini \& Cavalieri}
+% ======================================================================
+
+\begin{defn}[Measurable sets]
+$X \subseteq \R^n$ is \emph{measurable} if $\One{D_r(0) \cap X} \in L^1(\R^n)$ for every $r \in \N$; then
+\[
+\mu(X) \deq \lim_{r \to \oo} \int \One{D_r(0) \cap X} \in [0,\oo]
+\]
+is the \emph{measure} (volume) of $X$.
+\end{defn}
+
+\begin{thm}
+Open and closed sets are measurable; complements, countable unions and countable intersections of measurable sets are measurable; for pairwise disjoint measurable $(X_j)$: $\mu(\bigcup_j X_j) = \sum_j \mu(X_j)$. The null sets are exactly the measurable sets of measure zero. If $f \in L^1(\R^n)$ and $X$ is measurable, then $f_X \in L^1(\R^n)$.
+\end{thm}
+
+\begin{thm}[Fubini]
+Split $\R^n = \R^k \times \R^l$ and write $f_y(x) = f(x,y)$. If $f \in L^1(\R^n)$, then for almost all $y \in \R^l$ the function $f_y$ is integrable over $\R^k$, the function $y \mapsto \int f_y$ (arbitrarily completed on a null set) is integrable, and
+\[
+\int_{\R^n} f = \int_{\R^l} \left( \int_{\R^k} f_y \dd x \right) \dd y .
+\]
+\end{thm}
+
+\begin{exm}
+For $f(x,y) = \frac{y^2 - x^2}{(x^2+y^2)^2}$ on $(0,1)^2$ both iterated integrals exist but are \emph{not} equal ($1/2$ vs.\ $-1/2$): $f$ is not integrable, and Fubini must not be applied. Iterated integrals alone say nothing.
+\end{exm}
+
+\begin{prop}[Fubini on subsets]
+If $X = \bigcup_j X_j$ is an increasing exhaustion and $f$ is integrable over each $X_j$ (e.g.\ continuous on a compact $X$), then integrability over $X$ and the value of $\int_X f$ may be tested via iterated integrals over the slices $X^y = \set{x \mid (x,y) \in X}$.
+\end{prop}
+
+\begin{thm}[Cavalieri's principle]
+For measurable $X \subseteq \R^k \times \R^l$: the slices $X^y$ are measurable for a.e.\ $y$, and $\mu(X) < \oo$ iff $y \mapsto \mu_k(X^y)$ is integrable; then
+\[
+\mu_n(X) = \int_{\R^l} \mu_k(X^y) \dd y .
+\]
+\end{thm}
+
+\begin{exm}
+For compact $X$ and continuous $f \ge 0$ on $X$, the region under the graph, $Y = \set{(x,y) \in X \times \R \mid 0 \le y \le f(x)}$, has $\mu_{n+1}(Y) = \int_X f$.
+\end{exm}
+
+% ======================================================================
+\section{Differentiation in Several Variables}
+% ======================================================================
+
+\begin{defn}[Differential]
+Let $X \subseteq \R^n$ be open, $a \in X$. Then $f: X \to \R^p$ is \emph{differentiable at} $a$ if there is a linear map $l: \R^n \to \R^p$ with
+\[
+f(x) = f(a) + l(x - a) + o(\abs{x-a}) \quad (x \to a).
+\]
+This $l$ is then uniquely determined; it is called the \emph{differential} $Df(a)$ of $f$ at $a$.
+\begin{proofsketch}
+Uniqueness: if $l, m$ both qualify, test along lines $x = a + ty$; $(l - m)(y) = o(1)$ for $t \to 0$ forces $l = m$.
+\end{proofsketch}
+\end{defn}
+
+\begin{thm}[Chain rule]
+If $f: X \to Y$ and $g: Y \to \R^q$ are differentiable, then $g \comp f$ is differentiable with
+\[
+D(g \comp f)(a) = Dg\bigl(f(a)\bigr) \comp Df(a)
+\]
+--- the differential of a composition is the composition of the differentials (matrix product).
+\end{thm}
+
+\begin{exm}[Bilinear maps]
+Every bilinear $f: \R^m \times \R^n \to \R^p$ is differentiable with
+\[
+Df(a,b)(x,y) = f(x, b) + f(a, y),
+\]
+since the quadratic remainder $f(x - a, y - b) = O(\abs{(x,y)-(a,b)}^2)$.
+\end{exm}
+
+\begin{defn}[Partial derivatives, Jacobi matrix]
+The \emph{partial derivative} is $D_j f_i(a) = \frac{\partial f_i}{\partial x_j}(a)$ (differentiate $f_i$ in the $j$-th coordinate only). The \emph{Jacobi matrix} is $Df(a) = \bigl(\frac{\partial f_i}{\partial x_j}(a)\bigr) \in \Mat(p \times n, \R)$.
+\end{defn}
+
+\begin{lem}
+If $f$ is differentiable at $a$, all partial derivatives exist there and $Df(a)$ is the Jacobi matrix. The converse is false.
+\end{lem}
+
+\begin{thm}[$C^1$ criterion]
+If all partial derivatives of $f: X \to \R^p$ exist and are continuous on $X$, then $f$ is differentiable (a $C^1$-map).
+\begin{proofsketch}
+Walk from $a$ to $x$ along axis-parallel segments and apply the one-dimensional mean value theorem on each.
+\end{proofsketch}
+\end{thm}
+
+\begin{exm}[Spherical coordinates]
+$(r,\theta,\varphi) \mapsto (r\sin\theta\cos\varphi,\ r\sin\theta\sin\varphi,\ r\cos\theta)$ is $C^1$ with the well-known $3 \times 3$ Jacobi matrix; its determinant is $-r^2 \sin\theta$.
+\end{exm}
+
+\begin{defn}[Curves]
+A continuous $\gamma: T \to Y$ ($T \subseteq \R$ an interval) is a \emph{parametrized curve}; for differentiable $\gamma$ the \emph{velocity} is $\dot\gamma(t)$, the \emph{acceleration} $\ddot\gamma(t)$. The \emph{derivative of $f$ along} $v$ (directional derivative) is $Df(a)v$: realize $v$ as the velocity of a curve through $a$ and test:
+\[
+(f \comp \gamma)'(t) = Df(\gamma(t)) \cdot \dot\gamma(t) \quad \text{if } \gamma(t) = a, \ \dot\gamma(t) = v .
+\]
+\end{defn}
+
+\begin{defn}[Gradient]
+For scalar $f$, the \emph{gradient} is defined by $Df(a)v = \ip{\grad f(a)}{v}$ for all $v$, i.e.\ $\grad f(a) = Df(a)^t$ (row turned into a column).
+\end{defn}
+
+\begin{lem}[Complex differentiability]
+$f = u + \im v$ on an open $X \subseteq \C$ is complex differentiable at $c$ iff it is differentiable as a real map and the \emph{Cauchy--Riemann equations} hold:
+\[
+\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y}, \qquad \frac{\partial u}{\partial y} = -\frac{\partial v}{\partial x} \qquad \text{at } c.
+\]
+\end{lem}
+
+% ======================================================================
+\section{Diffeomorphisms, Inverse \& Implicit Functions}
+% ======================================================================
+
+\begin{defn}[Diffeomorphism]
+A differentiable $f: X \to Y$ between open sets is a \emph{diffeomorphism} if a differentiable $g: Y \to X$ with $g \comp f = \id$ and $f \comp g = \id$ exists (equivalently: $f$ is bijective and $f^{-1}$ differentiable). One-dimensional criterion: $f: I \to \R$ is a diffeomorphism onto its (open) image iff $f' \neq 0$ throughout.
+\end{defn}
+
+\begin{lem}
+If $f$ is a diffeomorphism, then every $Df(a)$ is an isomorphism; in particular $n = p$ (if $X \neq \emptyset$), and
+\[
+D(f^{-1})\bigl(f(a)\bigr) = Df(a)^{-1}.
+\]
+\begin{proofsketch}
+Differentiate $f^{-1} \comp f = \id$ with the chain rule.
+\end{proofsketch}
+\end{lem}
+
+\begin{thm}[Inverse function theorem]
+$f: X \to \R^n$ ($X$ open, $f \in C^1$) is a local $C^1$-diffeomorphism at $a$ iff $Df(a) \in \GL(n,\R)$: locally around $a$ (and around $f(a)$) $f$ has a differentiable inverse.
+\end{thm}
+
+\begin{thm}[Openness]
+A local diffeomorphism maps open sets to open sets; if it is injective, it is a (global) diffeomorphism onto its open image.
+\end{thm}
+
+\begin{cor}
+Restricting a (local/global) diffeomorphism to an open subset again gives one of the same kind.
+\end{cor}
+
+\begin{thm}[Implicit function theorem]
+Let $F: X \times Y \to \R^p$ be $C^1$ ($X \subseteq \R^n$, $Y \subseteq \R^p$ open), $F(a,b) = 0$. If the partial Jacobi matrix $\frac{\dd F}{\dd y}(a,b) \in \GL(p,\R)$, then around $(a,b)$ the zero set
+\[
+\set{(x,y) \in U \times V \mid F(x,y) = 0}
+\]
+is the graph of a $C^1$ map $f: U \to V$: the equation $F(x,y) = 0$ determines $y = f(x)$ differentiably.
+\end{thm}
+
+\begin{exm}
+Simple zeros of a polynomial depend differentiably on the coefficients: apply the implicit function theorem to the general polynomial $F(x, y) = y^n + \sum_{j<n} x_j y^j$ at a simple root.
+\end{exm}
+
+\begin{exm}[Polar coordinates]
+$(r,\theta) \mapsto (r\cos\theta, r\sin\theta)$ has the \emph{Jacobi determinant} $\det D(r,\theta) = r$; it is a local diffeomorphism exactly off the line $r = 0$.
+\end{exm}
+
+% ======================================================================
+\section{Submanifolds}
+% ======================================================================
+
+\begin{defn}[Cards]
+A \emph{(differentiable) card} for an open $X \subseteq \R^n$ is a diffeomorphism $h: U \to h(U)$ from an open $U \subseteq X$ onto an open $h(U) \subseteq \R^n$; a card with $h(a) = 0$ is a card \emph{around} $a$. If $(U,h)$, $(V,k)$ are cards and $f(U) \subseteq V$, then ``$f$ in the cards $h,k$'' means $k \comp f \comp h^{-1}$; e.g.\ a scalar function in polar coordinates is $f \comp h^{-1}$ with $h$ the inverse of the polar map.
+\end{defn}
+
+\begin{defn}[Rank, regular and critical points]
+For $f: X \to \R^p$ the \emph{rank at} $a$ is $\rk Df(a)$. The point $a$ is \emph{regular} if $\rk Df(a) = p$ (only possible for $n \ge p$), otherwise \emph{critical}.
+\end{defn}
+
+\begin{thm}[Regular point theorem]
+Around every regular point $a$ of a $C^1$-map $f$ there is a card in which $f$ is affine-linear:
+\[
+(f \comp h^{-1})(x_1, \dots, x_n) = f(a) + (x_1, \dots, x_p)^t .
+\]
+\end{thm}
+
+\begin{defn}[Submanifold]
+$Y \subseteq \R^n$ is a \emph{$k$-dimensional submanifold} of $\R^n$ if around every $a \in Y$ there is a card $h$ with
+\[
+h(U \cap Y) = h(U) \cap (\R^k \times \set{0}) .
+\]
+The card ``flattens'' $Y$ to $\R^k \times \set{0}$.
+\end{defn}
+
+\begin{defn}[Regular values]
+$b \in \R^p$ is a \emph{regular value} of $f: X \to \R^p$ if \emph{every} $a \in f^{-1}\set{b}$ is a regular point (values not attained count as regular).
+\end{defn}
+
+\begin{thm}[Regular value theorem]
+If $b$ is a regular value of the $C^1$-map $f: X \to \R^p$, then the fibre $f^{-1}\set{b}$ is a submanifold of dimension $n - p$.
+\begin{proofsketch}
+In a regular-point card, $f \comp h^{-1}$ is the projection onto the last $p$ coordinates; its zero set is visibly $\R^{n-p} \times \set{0}$.
+\end{proofsketch}
+\end{thm}
+
+\begin{exm}
+The sphere $S^{n-1} = f^{-1}\set{1}$ for $f(x) = \abs{x}^2$ is an $(n-1)$-dimensional submanifold; $O(n)$ is a submanifold of $\Mat(n \times n, \R)$ (fibre of $x \mapsto x^t x$ at $\mathbf{1}$); configuration spaces of point particles with differentiable constraints (fixed distances etc.) are submanifolds of $(\R^3)^n$.
+\end{exm}
+
+% ======================================================================
+\section{Tangent Vectors \& Lagrange Multipliers}
+% ======================================================================
+
+\begin{defn}[Tangent space]
+For an $n$-dimensional submanifold $X \subseteq \R^N$ and $a \in X$, with a submanifold card $H$ around $a$:
+\[
+T_a X \deq DH(a)^{-1}\bigl(\R^n \times \set{0}\bigr) \subseteq \R^N .
+\]
+This subspace is independent of the card; its elements are \emph{tangent vectors}.
+\end{defn}
+
+\begin{lem}[Tangent vectors are velocities]
+$T_a X$ consists exactly of the velocity vectors $\dot\gamma(0)$ of differentiable curves $\gamma$ in $X$ with $\gamma(0) = a$.
+\end{lem}
+
+\begin{defn}[Differential between manifolds]
+$f: X \to Y$ between submanifolds is differentiable at $a$ if in some submanifold card $h$ for $X$ around $a$ the map $f \comp h^{-1}$ is differentiable at $0$. The \emph{differential} is
+\[
+T_a f = D(f \comp h^{-1})(0): T_a X \to T_{f(a)} Y ,
+\]
+independent of the card; the chain rule $T_a(g \comp f) = T_{f(a)}g \comp T_a f$ holds. If $f$ extends to a differentiable $F$ on an open neighborhood, then $T_a f = DF(a)\big|_{T_a X}$.
+\end{defn}
+
+\begin{thm}[Tangent space of a fibre]
+If $b$ is a regular value of the $C^1$-map $f: X \to \R^p$, then for every $a \in Y = f^{-1}\set{b}$:
+\[
+T_a Y = \ker Df(a) .
+\]
+\begin{proofsketch}
+``$\subseteq$'': $f|_Y$ is constant. Equality because both spaces have dimension $n - p$.
+\end{proofsketch}
+\end{thm}
+
+\begin{exm}
+$T_a S^{n-1} = \set{a}^{\bot}$: the tangent space of the sphere is the hyperplane perpendicular to the position vector (since $Df(a) = 2a^t$ for $f(x) = \abs{x}^2$).
+\end{exm}
+
+\begin{thm}[Lagrange multipliers]
+Let $b$ be a regular value of $F: X \to \R^p$ ($X \subseteq \R^n$ open), $Y = F^{-1}\set{b}$, and $f: X \to \R$ differentiable, $a \in Y$. Equivalent:
+\begin{itemize}
+\item $a$ is a critical point of $\restr{f}{Y}$ (``$f$ under the constraint $F = b$'');
+\item there are uniquely determined \emph{Lagrange multipliers} $\lambda_1, \dots, \lambda_p \in \R$ such that $a$ is a critical point of
+\[
+f - \lambda_1 F_1 - \dots - \lambda_p F_p .
+\]
+\end{itemize}
+\end{thm}
+
+\begin{exm}
+For a quadratic form $q$ with symmetric matrix $s$ restricted to the sphere: critical points of $q - \lambda\abs{x}^2$ solve $sx = \lambda x$; the critical points are the unit eigenvectors, the critical values the eigenvalues --- the smallest and largest eigenvalues of $q$ (cf.\ Section 1).
+\end{exm}
+
+\begin{prop}[$C^k$ maps, symmetry of mixed derivatives]
+$f: X \to \R^p$ is $C^k$ iff all partial derivatives of order $\le k$ exist and are continuous. For $C^k$-maps the order of differentiation does not matter:
+{\footnotesize\[
+D_{j_1} D_{j_2} \cdots D_{j_k} f = D_{j_{\sigma(1)}} \cdots D_{j_{\sigma(k)}} f \quad \text{for all } \sigma \in \Sym_k .
+\]}
+\begin{proofsketch}
+Case $k = 2$, $n = 2$: apply the one-dimensional mean value theorem twice in the two orders.
+\end{proofsketch}
+\end{prop}
+
+\begin{defn}[Tangent bundle, vector fields]
+The \emph{tangent bundle} of an $n$-dimensional $C^k$-submanifold is
+\[
+TX \deq \set{(x, v) \in X \times \R^N \mid v \in T_x X} \xrightarrow{\;\pi\;} X,
+\]
+with fibres $\pi^{-1}\set{x} = \set{x} \times T_xX$. A \emph{vector field} is a map $v: X \to TX$ with $\pi \comp v = \id$, i.e.\ $v(x) \in T_xX$ (physicists: \emph{contravariant} field). In a card $(U,h)$, $v$ is described by the component functions $(v^1, \dots, v^n)$; under a card change $k \comp h^{-1}$ the components transform with the \emph{differential} of the card change.
+\end{defn}
+
+% ======================================================================
+\section{Pfaffian Forms \& Line Integrals}
+% ======================================================================
+
+\begin{defn}[Pfaffian forms]
+A \emph{Pfaffian form} (1-form) on a manifold $X$ assigns to every $x \in X$ a linear form $\omega_x$ on $T_xX$, i.e.\ $\omega: TX \to \R$ linear on each fibre (physicists: \emph{covariant} field). In a card $(U,h)$:
+{\footnotesize\[
+\omega = g_1 \dd h_1 + \dots + g_n \dd h_n, \qquad \text{row } g(z) = \bigl(g_1(z), \dots, g_n(z)\bigr).
+\]}
+Under a card change the row transforms with the inverse of the differential --- precisely the opposite of vector fields.
+\end{defn}
+
+\begin{defn}[Exact forms]
+For differentiable $f: X \to \R$, the second component of $Tf: TX \to T\R = \R \times \R$ is the Pfaffian form $\dd f$, the \emph{differential}; in a card $\dd f = \sum_j \frac{\partial(f \comp h^{-1})}{\partial z_j} \dd h_j$. Forms of this type are called \emph{exact}. The $n$-tuples $(\frac{\partial}{\partial h_1}, \dots, \frac{\partial}{\partial h_n})$ and $(\dd h_1, \dots, \dd h_n)$ are dual bases of $T_xX$ and $(T_xX)^*$.
+\end{defn}
+
+\begin{cor}[Integrability condition]
+A differentiable $\omega = g_1 \dd x_1 + \cdots + g_n \dd x_n$ can be exact only if
+\[
+\frac{\partial g_j}{\partial x_i} = \frac{\partial g_i}{\partial x_j} \quad \text{for all } i \neq j .
+\]
+\end{cor}
+
+\begin{exm}
+$\omega = r\,\dd\theta = \frac{-y \dd x + x \dd y}{x^2+y^2}$ on $\R^2 \setminus \set{0}$ satisfies the integrability condition (check in polar coordinates) but is \emph{not} exact.
+\end{exm}
+
+\begin{defn}[Curve integral]
+For a continuous Pfaffian form $\omega$ on $X$ and a $C^1$-curve $\gamma: [a,b] \to X$:
+\[
+\int_\gamma \omega \deq \int_a^b \omega_{\gamma(t)}\bigl(\dot\gamma(t)\bigr) \dd t .
+\]
+Reparametrization: $\int_{\gamma \comp s} \omega = \int_{\gamma|_{[s(a),s(b)]}} \omega$ for $C^1$ parameter changes $s$.
+\end{defn}
+
+\begin{lem}[Fundamental theorem for line integrals]
+For differentiable $f$ and a $C^1$-path $\gamma$ from $a$ to $b$:
+\[
+\int_\gamma \dd f = f(b) - f(a).
+\]
+Hence for exact $\omega$ the integral depends only on the endpoints; in particular $\int_\gamma \omega = 0$ along closed paths. Conversely, path independence on all of $X$ implies exactness.
+\end{lem}
+
+\begin{exm}[Winding number]
+For the same $\omega = r\,\dd\theta$ and the circle $\gamma(t) = (\cos t, \sin t)$, $t \in [0, 2\pi]$:
+\[
+\oint_\gamma \omega = \int_0^{2\pi} \dd t = 2\pi \neq 0 ,
+\]
+confirming non-exactness on $\R^2 \setminus \set{0}$ (yet $\omega$ is locally exact by the Poincar\'e lemma).
+\end{exm}
+
+% ======================================================================
+\section{Alternating Multilinear Forms}
+% ======================================================================
+
+\begin{defn}
+A \emph{multilinear form of degree} $k$ on $V$ is $\omega: V^k \to \R$ linear in each variable; it is \emph{alternating} if $\omega(v_1, \dots, v_k) = 0$ whenever two arguments coincide. Alternating forms form a vector space $\Alt^k V$; $\Alt^0 V = \R$. Examples: bilinear forms with $k = 2$; the determinant as an element of $\Alt^n \R^n$.
+\end{defn}
+
+\begin{prop}
+For $\omega \in \Alt^k V$:
+\begin{itemize}
+\item $\omega = 0$ on linearly dependent $k$-tuples; in particular $\Alt^k V = \set{0}$ for $k > n$;
+\item permuting arguments multiplies by the sign: $\omega(v_{\sigma(1)}, \dots, v_{\sigma(k)}) = \sgn(\sigma)\, \omega(v_1, \dots, v_k)$;
+\item for linear $f: \Lin(v_1, \dots, v_k) \to \Lin(v_1, \dots, v_k)$: $\omega(f(v_1), \dots, f(v_k)) = \det f \cdot \omega(v_1, \dots, v_k)$.
+\end{itemize}
+\end{prop}
+
+\begin{defn}[Wedge product]
+For $\omega \in \Alt^k V$, $\eta \in \Alt^l V$:
+{\footnotesize\[
+\omega \wedge \eta \deq \frac{1}{k!\,l!} \sum_{\sigma \in \Sym_{k+l}} \sgn(\sigma)\, (\omega \otimes \eta)\bigl(v_{\sigma(1)}, \dots, v_{\sigma(k+l)}\bigr) \in \Alt^{k+l} V .
+\]}
+Bilinear, associative, and \emph{graded commutative}, that is $\omega \wedge \eta = (-1)^{kl}\, \eta \wedge \omega$.
+\end{defn}
+
+\begin{prop}[Determinant formula, bases, pullback]
+\begin{itemize}
+\item Determinant formula: for linear forms $\lambda^1, \dots, \lambda^k \in \Alt^1 V$,
+\[
+(\lambda^1 \wedge \cdots \wedge \lambda^k)(v_1, \dots, v_k) = \det\bigl(\lambda^i(v_j)\bigr).
+\]
+\item If $(\dd h_1, \dots, \dd h_n)$ is a basis of $V^*$, the products $\dd h_{i_1} \wedge \cdots \wedge \dd h_{i_k}$ with $i_1 < \cdots < i_k$ form a basis of $\Alt^k V$; in particular $\dim \Alt^k V = \binom{n}{k}$.
+\item For linear $f: V \to W$ the pullback obeys $f^*(\omega \wedge \eta) = f^*\omega \wedge f^*\eta$.
+\end{itemize}
+\end{prop}
+
+\begin{exm}
+Cartesian coordinates on $\R^3$ give the bases
+{\footnotesize\[
+1; \quad \dd x, \dd y, \dd z; \quad \dd y \wedge \dd z,\ \dd z \wedge \dd x,\ \dd x \wedge \dd y; \quad \dd x \wedge \dd y \wedge \dd z
+\]}
+of $\Alt^0, \Alt^1, \Alt^2, \Alt^3(\R^3)$ respectively ($\dim \Alt^2 \R^3 = 3$, $\dim \Alt^3 \R^3 = 1$).
+\end{exm}
+
+% ======================================================================
+\section{Differential Forms \& the Cartan Differential}
+% ======================================================================
+
+\begin{defn}[Differential forms]
+A \emph{$k$-form} on $X$ is a map $\omega: T^kX \to \R$ whose restriction to each fibre is an alternating $k$-linear form on $T_xX$:
+\[
+\omega_x(v_1, \dots, v_k) = \omega(x, v_1, \dots, v_k).
+\]
+$0$-forms are functions; $1$-forms are Pfaffian forms. Wedge product and pullback ($f^*\omega \deq \omega \comp T^k f$) are defined fibre-wise.
+\end{defn}
+
+\begin{rem}[Dictionary in $\R^3$]
+Under the Euclidean identification of $1$-forms $\omega = a\dd x + b\dd y + c\dd z$ and of $2$-forms $\omega = a\,\dd y \wedge \dd z + b\,\dd z \wedge \dd x + c\,\dd x \wedge \dd y$ with vector fields $(a,b,c)$: \emph{contravariant} vector fields (velocities, force fields) are genuine vector fields; \emph{covariant} fields (current densities, force fields measured on surfaces) are $1$- or $2$-forms. Transformation behavior under affine coordinate changes differs accordingly.
+\end{rem}
+
+\begin{rem}[Orientation]
+An orientation of $T_xX$ (equivalently of $X$) is a consistent choice of ``positively oriented'' bases; orientation of a manifold means orienting all tangent spaces continuously. Antipodal map $x \mapsto -x$ on $S^n$ is orientation-preserving iff $n$ is odd.
+\end{rem}
+
+\begin{thm}[Cartan differential]
+There is exactly one family of linear maps $\dd: A^kX \to A^{k+1}X$ ($k \in \N$) with:
+\begin{itemize}
+\item $\dd f$ is the differential of $f$ (for $0$-forms $f$);
+\item product rule: $\dd(\omega \wedge \eta) = \dd\omega \wedge \eta + (-1)^k \omega \wedge \dd\eta$ for $\omega \in A^kX$;
+\item $\dd \comp \dd = 0$.
+\end{itemize}
+It is natural: $f^*(\dd\omega) = \dd(f^*\omega)$ for every differentiable $f$.
+\end{thm}
+
+\begin{prop}[Disguises in $\R^3$]
+Identifying $1$- and $2$-forms with vector fields (see above), the Cartan differential becomes the classical operators:
+\[
+\dd^0 = \grad, \qquad \dd^1 = \rot, \qquad \dd^2 = \Ddiv .
+\]
+Then $\dd\dd = 0$ reads $\rot \comp \grad = 0$ and $\Ddiv \comp \rot = 0$: gradient fields are curl-free, curl fields are divergence-free.
+\end{prop}
+
+\begin{defn}[Closed and exact forms]
+$\omega \in A^kX$ is \emph{closed} if $\dd\omega = 0$; for $k > 0$ it is \emph{exact} if $\omega = \dd\eta$ for some $\eta \in A^{k-1}X$. Every exact form is closed; the converse fails globally (e.g.\ $r\,\dd\theta$).
+\end{defn}
+
+\begin{thm}[Poincar\'e lemma]
+If $X \subseteq \R^n$ is open and \emph{star-shaped} with respect to $a \in X$ (all segments $(1-t)a + tx$ stay in $X$), then every closed $k$-form, $k > 0$, is exact.
+\begin{proofsketch}
+Assume $a = 0$ and average along rays: the homotopy operator $H\omega = \int_0^1 t^{k-1} \omega_{tx}(x, \cdot)\dd t$ (inserting $x$ as first argument) satisfies $\dd H + H \dd = \id$; for closed $\omega$, $\dd(H\omega) = \omega$.
+\end{proofsketch}
+\end{thm}
+
+\begin{cor}
+Every closed $k$-form is \emph{locally} exact: around each point there is a card in which it has a primitive (local primitives need not glue to a global one).
+\end{cor}
+
+% ======================================================================
+\section{Integration of Differential Forms}
+% ======================================================================
+
+\begin{thm}[Substitution theorem]
+Let $\Phi: U \to \Phi(U)$ be a $C^1$-diffeomorphism between open subsets of $\R^n$ and $f: \Phi(U) \to \R$ integrable. Then $(f \comp \Phi)\cdot\abs{\det D\Phi}$ is integrable over $U$, and
+\[
+\int_{\Phi(U)} f = \int_U (f \comp \Phi) \cdot \abs{\det D\Phi} .
+\]
+\end{thm}
+
+\begin{cor}[Measure transformation]
+For $X \subseteq U$ with $\Phi(X)$ measurable, $\mu(\Phi(X)) < \oo$ iff $\abs{\det D\Phi}$ is integrable over $X$; then
+\[
+\mu\bigl(\Phi(X)\bigr) = \int_X \abs{\det D\Phi(x)} \dd x .
+\]
+\end{cor}
+
+\begin{defn}[Integral of an $n$-form]
+For $\omega = f \dd x_1 \wedge \cdots \wedge \dd x_n$ on open $U \subseteq \R^n$ (with unique coefficient function $f$) and $X \subseteq U$:
+\[
+\int_X \omega \deq \int_X f \dd x \quad \text{(if this exists).}
+\]
+\end{defn}
+
+\begin{exm}[Volume elements]
+Polar coordinates: $\dd x \wedge \dd y = r\,\dd r \wedge \dd\theta$; spherical coordinates: $\dd x \wedge \dd y \wedge \dd z = r^2 \sin\theta\, \dd r \wedge \dd\theta \wedge \dd\varphi$. This is what makes ``integrating $f(r,\theta,\varphi)$ in spherical coordinates'' precise.
+\end{exm}
+
+\begin{rem}[Stokes' theorem]
+For a \emph{bordered manifold} $Y$ (locally modelled on half-spaces; arises e.g.\ as $f^{-1}((-\oo, b])$ for a regular value $b$) with boundary $\partial Y$, and a $C^1$ $(n-1)$-form $\omega$:
+\[
+\int_Y \dd\omega = \int_{\partial Y} \omega ,
+\]
+generalizing the fundamental theorem of calculus: the exterior derivative and the boundary are adjoint.
+\end{rem}
+
+% ======================================================================
+\section{Higher Derivatives \& Taylor}
+% ======================================================================
+
+\begin{defn}[Multiindices]
+For $j = (j_1, \dots, j_n) \in \N^n$ write $X^j = X_1^{j_1} \cdots X_n^{j_n}$, $\abs{j} = j_1 + \cdots + j_n$, $j! = j_1! \cdots j_n!$. A \emph{polynomial} of degree $d$ in $n$ variables is $f = \sum_{\abs{j} \le d} a_j X^j$; e.g.\ the general degree-$2$ polynomial in three variables has the constant, linear ($a_{100}X + \dots$) and quadratic ($a_{200}X^2 + a_{011}YZ + \dots$) parts.
+\end{defn}
+
+\begin{lem}
+The polynomial $f = \sum_{\abs{j} \le d} a_j X^j$ has at $0$ the derivatives $D^k f(0) = k!\, a_k$ for all $k \in \N^n$.
+\end{lem}
+
+\begin{defn}[Taylor polynomial]
+For a $C^k$-function $f: X \to \R$ ($X \subseteq \R^n$ open) and $a \in X$:
+\[
+T_a^k f(X) \deq \sum_{\abs{j} \le k} \frac{D^j f(a)}{j!} (X - a)^j .
+\]
+It is the \emph{unique} polynomial of degree $\le k$ whose partial derivatives at $a$ agree with those of $f$ up to order $k$. For $C^k$-maps $f: X \to \R^p$ apply component-wise.
+\end{defn}
+
+\begin{defn}[Hessian]
+For a $C^2$-function $f$ the \emph{Hessian matrix} at $a$ is
+\[
+H_f(a) \deq \Bigl( D_r D_s f(a) \Bigr)_{r,s} \in \Sym(n, \R);
+\]
+by the symmetry of mixed derivatives it is symmetric.
+\end{defn}
+
+\begin{prop}[Calculus for Taylor polynomials]
+\begin{itemize}
+\item Chain rule: $T_{f(a)}^k(g \comp f) = T_{f(a)}^k g \comp T_a^k f$ (truncate after composing).
+\item Product rule: for bilinear products, $T_a^k(f \cdot g) = T_a^k\bigl(T_a^k f \cdot T_a^k g\bigr)$.
+\item Invariance: if $a$ is a critical point and $h$ a card around $a$, then $H_f(a) = Dh(a)^t \cdot H_{f \comp h^{-1}}(0) \cdot Dh(a)$: the Hessian form at a critical point does not depend on the card.
+\end{itemize}
+\end{prop}
+
+\begin{thm}[Taylor's theorem]
+Let $f: X \to \R^p$ be $C^{k+1}$ and suppose the segment from $a$ to $x$ lies in $X$. Then
+{\footnotesize\[
+f(x) - T_a^k f(x) = \sum_{\abs{j} = k+1} \frac{(x-a)^j}{j!} \int_0^1 (1-t)^{k}\, D^j f\bigl((1-t)a + tx\bigr) \dd t .
+\]}
+There also is a \emph{Lagrange remainder}: some $t \in [0,1]$ satisfies
+\[
+f(x) - T_a^k f(x) = \sum_{\abs{j} = k+1} \frac{D^j f((1-t)a + tx)}{j!} (x-a)^j .
+\]
+\begin{proofsketch}
+Apply the one-dimensional Taylor formula to $\gamma(t) = f((1-t)a + tx)$ and unwind the chain rule.
+\end{proofsketch}
+\end{thm}
+
+\begin{lem}[Divisible functions]
+If $X$ is star-shaped with respect to $a$ and $T_a^{k-1}f = 0$ ($f \in C^l$, $1 \le k \le l$), then there are $C^{l-k}$-functions $f_j$ with
+\[
+f(x) = \sum_{\abs{j} = k} (x-a)^j f_j(x) ;
+\]
+in particular $f(x) = \sum_j (x-a)_j f_j(x)$ if all first-order derivatives vanish at $a$.
+\end{lem}
+
+\begin{exm}
+The $C^\oo$-function $f(x) = 0$ ($x \le 0$), $\e^{-1/x^2}$ ($x > 0$) has trivial Taylor series at $0$ yet is not zero: arbitrarily many factors $x$ can be pulled out of $f$. An analytic function with this property would vanish identically.
+\end{exm}
+
+% ======================================================================
+\section{Morse Points}
+% ======================================================================
+
+\begin{defn}[Morse points]
+A critical point $a$ of the differentiable $f: X \to \R$ is a \emph{Morse point} if the Hessian form $H_a f$ has maximal rank $n$ (is nondegenerate). If all critical points of $f$ are Morse points, $f$ is a \emph{Morse function}.
+\end{defn}
+
+\begin{thm}[Morse lemma]
+If $a$ is a Morse point of $f$, there is a card $(U,h)$ around $a$ in which $f$ becomes a pure quadratic form:
+\[
+(f \comp h^{-1})(x) = f(a) - x_1^2 - \dots - x_\sigma^2 + x_{\sigma+1}^2 + \dots + x_n^2 .
+\]
+The number $\sigma \in \set{0, \dots, n}$, the number of negative squares (= negative eigenvalues of the Hessian), is the \emph{Morse index} of $a$. Near a regular point $f$ is linear in a suitable card; near a Morse point it is quadratic.
+\end{thm}
+
+\begin{prop}
+Every Morse point is an \emph{isolated} critical point: some neighborhood of $a$ contains no further critical point of $f$.
+\end{prop}
+
+\begin{thm}[Extremum criteria]
+\begin{itemize}
+\item If $f$ has a local extremum at $a$, then $a$ is a critical point ($Df(a) = 0$).
+\item If $a$ is a Morse point, then $f$ has a local minimum at $a$ iff the Morse index is $0$, and a local maximum iff the index is $n$.
+\end{itemize}
+\end{thm}
+
+\begin{lem}
+If the Hessian form $H_a f$ has at least one negative eigenvalue, then $f$ has no local minimum at $a$ (dually for maxima).
+\begin{proofsketch}
+Write $f(x) = \frac12 x^t H(x) x$ with continuous $H$; along an eigenvector for a negative eigenvalue $f$ takes negative values arbitrarily close to $a$.
+\end{proofsketch}
+\end{lem}
+
+\begin{exm}[Quadratic forms on the sphere]
+Critical points of $\restr{q}{S^{n-1}}$ are the unit eigenvectors, with the eigenvalues as critical values; the smallest and largest eigenvalues give the global min and max. Such a critical point is Morse iff the eigenvalue is simple. Check definiteness of $H_a f$ with the Sylvester criterion.
+\end{exm}
+
+\begin{rem}[Recipe for global extrema]
+Find the critical points (with Lagrange multipliers for constraints), test the Hessian for index --- and treat boundary/constraint parts \emph{separately}: the theorems apply only on the (borderless) manifold. For $f(x,y) = x^2 + x + 2y^2$ on the closed disk: interior critical point $(-\frac12, 0)$ with local min $-\frac14$; boundary extrema via a Lagrange multiplier on $S^1$.
+\end{rem}
+
+% ======================================================================
+\section{Quick Reference: Coordinates \& Vector Analysis}
+% ======================================================================
+
+\begin{itemize}
+\item Polar: $x = r\cos\theta$, $y = r\sin\theta$, $\dd x \dd y = r\,\dd r\, \dd\theta$; cylindrical: add $z$, $\dd x \dd y \dd z = r\, \dd r\, \dd\theta\, \dd z$; spherical: $(r\sin\theta\cos\varphi,\ r\sin\theta\sin\varphi,\ r\cos\theta)$, volume element $r^2\sin\theta\, \dd r\, \dd\theta\, \dd\varphi$.
+\item Dictionary $\R^3$: functions $=$ $0$-forms, $\dd^0 = \grad$; vector fields $\leftrightarrow$ $1$-forms, $\dd^1 = \rot$; vector fields $\leftrightarrow$ $2$-forms, $\dd^2 = \Ddiv$; $\rot\grad = 0$, $\Ddiv\rot = 0$; a field with scalar potential is curl-free, one with vector potential is divergence-free.
+\item Closed vs.\ exact: closed $\ne$ exact globally ($r\,\dd\theta$ on $\R^2\setminus\set{0}$, $\oint = 2\pi$); on star-shaped domains closed $=$ exact (Poincar\'e); local exactness always holds.
+\item Convergence theorems: monotone (bounded integrals) and dominated ($\abs{f_j} \le g \in L^1$) convergence; exhaustion for unbounded domains; improper integrals require \emph{absolute} limits.
+\item Key tools: Newton--Leibniz, Fubini (only for integrable $f$!), substitution/Jacobi determinant, Cavalieri, Stokes $\int_Y \dd\omega = \int_{\partial Y}\omega$, Taylor with integral or Lagrange remainder, Morse lemma.
+\item Topology: compact $=$ closed $+$ bounded; continuous images of compact/connected sets are compact/connected; on compact sets continuous real functions attain min and max; continuous bijections out of compact spaces are homeomorphisms.
+\end{itemize}
+
+\end{multicols*}
+
+\end{document}
