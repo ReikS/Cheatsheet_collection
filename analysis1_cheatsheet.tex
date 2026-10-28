@@ -1,0 +1,880 @@
+% ======================================================================
+%  Analysis 1 Cheatsheet (one-variable real & complex analysis)
+%  Self-contained: compile with pdflatex (two runs).
+%  Anonymous: no author names.
+% ======================================================================
+\documentclass[10pt,a4paper,landscape]{article}
+
+% ---------- packages ----------
+\usepackage[landscape,margin=1.1cm,top=1.0cm,bottom=1.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{titlesec}
+
+% ---------- colors ----------
+\definecolor{defblue}{RGB}{20,60,120}
+\definecolor{thmgreen}{RGB}{0,100,60}
+\definecolor{exgray}{RGB}{90,90,90}
+\definecolor{boxbg}{RGB}{245,247,250}
+\definecolor{headbg}{RGB}{30,50,80}
+
+% ---------- theorem environments ----------
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{exm}{Example}[section]
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}{Lemma}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{cor}{Corollary}[section]
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+
+% ---------- math shortcuts ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\im}{\operatorname{Im}}
+\newcommand{\re}{\operatorname{Re}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\ceil}[1]{\lceil #1 \rceil}
+\newcommand{\floor}[1]{\lfloor #1 \rfloor}
+\newcommand{\oo}{\infty}
+\newcommand{\deq}{\coloneqq}
+\newcommand{\comp}{\circ}
+\newcommand{\inv}{^{-1}}
+\newcommand{\pow}[1]{^{(#1)}}
+\newcommand{\ball}[1]{U_{#1}}
+\newcommand{\cball}[1]{D_{#1}}
+\newcommand{\restr}[2]{#1|_{#2}}
+\newcommand{\degg}{\operatorname{deg}}
+\newcommand{\cis}{\operatorname{cis}}
+\newcommand{\Logm}{\operatorname{Log}}
+\newcommand{\Argm}{\operatorname{Arg}}
+\DeclareMathOperator{\arcosh}{arcosh}
+\DeclareMathOperator{\arsinh}{arsinh}
+\DeclareMathOperator{\artanh}{artanh}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\arcsec}{arcsec}
+\DeclareMathOperator{\arccsc}{arccsc}
+
+% ---------- compact layout ----------
+\setlist{nosep,leftmargin=1.1em,itemsep=0.5pt,topsep=1pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.5pt}
+\setlength{\abovedisplayskip}{3pt}
+\setlength{\belowdisplayskip}{3pt}
+\setlength{\abovedisplayshortskip}{1.5pt}
+\setlength{\belowdisplayshortskip}{1.5pt}
+\setlength{\columnsep}{14pt}
+\setlength{\columnseprule}{0.3pt}
+
+% ---------- headers/footers ----------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{headbg}\textbf{Analysis 1 Cheatsheet}}
+\fancyhead[R]{\footnotesize\color{headbg}Sequences, Series, Continuity, Complex Numbers, Power Series, exp/log/trig, Differentiation, Taylor}
+\fancyfoot[C]{\footnotesize\color{exgray}Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.2pt}
+
+% ---------- section styling ----------
+\titleformat{\section}{\large\bfseries\color{headbg}}{\thesection}{0.5em}{}[{\color{headbg}\titlerule[0.6pt]}]
+\titlespacing{\section}{0pt}{6pt}{3pt}
+\titleformat{\subsection}{\normalsize\bfseries\color{defblue}}{\thesubsection}{0.5em}{}
+\titlespacing{\subsection}{0pt}{4pt}{2pt}
+
+% ---------- proof sketch ----------
+\newenvironment{proofsketch}{%
+  \par\small\color{exgray}\textbf{Sketch.}\ }%
+  {\par}
+
+\begin{document}
+
+\begin{multicols*}{3}
+
+% ======================================================================
+\section{Set Theory \& Maps}
+% ======================================================================
+
+\begin{defn}[Set]
+A \emph{set} is a collection of distinct objects (its \emph{elements}). $x \in M$: $x$ is an element of $M$; $x \notin M$: not. The \emph{empty set} is $\emptyset$.
+\end{defn}
+
+\begin{defn}[Set operations]
+$A \subseteq B$ iff every element of $A$ lies in $B$; $A = B$ iff $A \subseteq B$ and $B \subseteq A$.
+{\footnotesize\[
+\begin{gathered}
+A \cap B \deq \set{x \mid x \in A \text{ and } x \in B},\quad
+A \cup B \deq \set{x \mid x \in A \text{ or } x \in B},\\
+A \setminus B \deq \set{x \mid x \in A,\, x \notin B}.
+\end{gathered}
+\]}
+$A \times B \deq \set{(a,b) \mid a \in A,\, b \in B}$ (Cartesian product); $A^n = A \times \cdots \times A$ ($n$ factors).
+\end{defn}
+
+\begin{defn}[Map]
+A \emph{map} (function) $f: X \to Y$ assigns to each $x \in X$ exactly one value $f(x) \in Y$ ($X$: domain, $Y$: codomain). \emph{Image} $f(A) = \set{f(x) \mid x \in A}$; \emph{preimage} $f^{-1}(B) = \set{x \in X \mid f(x) \in B}$.
+\end{defn}
+
+\begin{defn}[Injective / surjective / bijective]
+$f$ is \emph{injective} if $f(x)=f(x') \Rightarrow x=x'$; \emph{surjective} if $f(X)=Y$; \emph{bijective} if both.
+\end{defn}
+
+\begin{thm}[Inverse map]
+$f: X \to Y$ has an inverse $f^{-1}: Y \to X$ (with $f^{-1}\comp f = \id_X$ and $f \comp f^{-1} = \id_Y$) iff $f$ is bijective; then $f^{-1}$ is unique.
+\end{thm}
+
+\begin{defn}[Composition]
+$(g \comp f)(x) = g(f(x))$ for $f: X \to Y$, $g: Y \to Z$.
+\end{defn}
+
+\begin{exm}
+Dirichlet function $f(x) = 1$ if $x \in \Q$, else $0$: a valid map, continuous nowhere.
+\end{exm}
+
+% ======================================================================
+\section{Number Systems \& Inequalities}
+% ======================================================================
+
+\begin{defn}[Group / ring / field]
+\emph{Group} $(G,\cdot)$: associative, identity $1$, inverses; \emph{abelian} if commutative.
+\emph{Ring} $(R,+,\cdot)$: $(R,+)$ abelian group, $\cdot$ associative with $1$, distributive.
+\emph{Field} $K$: commutative ring with $1 \neq 0$ and every $x \neq 0$ invertible.
+\end{defn}
+
+\begin{exm}
+$(\Z,+)$, $(\Q,+)$, $(\R,+)$ abelian groups; $(\Q\setminus\set{0},\cdot)$, $(\R\setminus\set{0},\cdot)$ abelian groups. $\Z \subset \Q \subset \R$ are subrings; $\Q,\R$ are fields.
+\end{exm}
+
+\begin{thm}[Induction principle]
+If $A_0$ holds and $A_n \Rightarrow A_{n+1}$ for all $n \in \N$, then all $A_n$ hold. Variant: if $A_0,\dots,A_{n-1} \Rightarrow A_n$ for all $n$, then all hold.
+\end{thm}
+
+\begin{defn}[Order axioms of $\R$]
+For each $x \in \R$ exactly one of $x>0$, $x=0$, $-x>0$ holds; $x,y>0 \Rightarrow x+y>0$ and $xy>0$; \emph{Archimedes}: for every $x \in \R$ there is $n \in \N$ with $n - x > 0$.
+\end{defn}
+
+\begin{prop}[Inequality rules]
+$x<y$, $y<z \Rightarrow x<z$; $a<b$, $x<y \Rightarrow a+x<b+y$; $a>0$, $x<y \Rightarrow ax<ay$ (reverses for $a<0$); $x \neq 0 \Rightarrow x^2>0$; $0<x<y \Rightarrow x^{-1}>y^{-1}$; for every $\eps>0$ there is $n>0$ with $1/n<\eps$.
+\end{prop}
+
+\begin{thm}[Bernoulli's inequality]
+$(1+x)^n \ge 1 + nx$ for $x \ge -1$, $n \in \N$.
+\begin{proofsketch}
+Induction on $n$: multiply $(1+x)^n \ge 1+nx$ by $(1+x) \ge 0$.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Density of $\Q$]
+Between any two distinct reals $x<y$ there is a rational $r$: $x<r<y$.
+\begin{proofsketch}
+Pick $q$ with $1/q < y-x$; set $p = \floor{qx} + 1$; then $x < p/q < y$.
+\end{proofsketch}
+\end{thm}
+
+\begin{defn}[Absolute value]
+$\abs{x} = x$ for $x \ge 0$, $-x$ for $x<0$.
+\end{defn}
+
+\begin{thm}[Triangle inequality]
+$\abs{x \pm y} \le \abs{x} + \abs{y}$; also $\bigl\lvert\abs{x}-\abs{y}\bigr\rvert \le \abs{x+y}$.
+\end{thm}
+
+\begin{defn}[Floor / ceiling]
+$\floor{x}$ = largest integer $\le x$; $\ceil{x}$ = smallest integer $\ge x$.
+\end{defn}
+
+\begin{defn}[Supremum / infimum]
+$s = \sup A$ iff $s$ is an upper bound of $A$ and no $t < s$ is one; $i = \inf A$ dually. \emph{Completeness of $\R$}: every nonempty set bounded above has a supremum.
+\end{defn}
+
+% ======================================================================
+\section{Sequences}
+% ======================================================================
+
+\begin{defn}[Sequence]
+A \emph{sequence} in $Y$ is a map $x: \N \to Y$, written $(x_n)_{n \in \N}$ or $(x_n)_{n=0}^{\oo}$.
+\end{defn}
+
+\begin{defn}[Convergence]
+$(x_n) \to a$ (\emph{converges to} $a$) iff for every $\eps > 0$ there is $D \in \N$ with $\abs{x_n - a} < \eps$ for all $n > D$. Notation: $\lim_{n \to \oo} x_n = a$. Otherwise \emph{divergent}.
+\end{defn}
+
+\begin{exm}
+$1/n \to 0$; $(-1)^n$ diverges; $x^n \to 0$ for $\abs{x}<1$, $x^n \to 1$ for $x=1$, else diverges (geometric sequence).
+\end{exm}
+
+\begin{defn}[Bounded]
+$(x_n)$ is \emph{bounded} iff $\set{x_n \mid n \in \N}$ is bounded, i.e.\ there is $c \in \R$ with $\abs{x_n} \le c$ for all $n$.
+\end{defn}
+
+\begin{lem}
+Every convergent sequence is bounded.
+\end{lem}
+
+\begin{lem}[Uniqueness of limits]
+A convergent sequence has exactly one limit.
+\begin{proofsketch}
+If $x_n \to a$ and $x_n \to b$, then $\abs{a-b} \le \abs{a-x_n} + \abs{x_n-b} < \eps$ for all $\eps>0$, hence $a=b$.
+\end{proofsketch}
+\end{lem}
+
+\begin{prop}[Limit rules]
+If $x_n \to a$, $y_n \to b$: $x_n + y_n \to a+b$; $x_n y_n \to ab$; if $b \neq 0$ then $x_n/y_n \to a/b$ (for large $n$); if $x_n \le y_n$ for all $n$ then $a \le b$.
+\end{prop}
+
+\begin{thm}[Ratios of polynomials]
+For polynomials $f$ (deg $d$) and $g \neq 0$ (deg $e$): $\lim_{n\to\oo} f(n)/g(n) = a_d/b_e$ if $d=e$; $=0$ if $d<e$; diverges if $d>e$.
+\begin{proofsketch}
+Factor out $n^d$, $n^e$; use $1/n \to 0$.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Squeeze theorem]
+If $x_n \le y_n \le z_n$ for all $n$ and $x_n, z_n \to a$, then $y_n \to a$.
+\end{thm}
+
+% ======================================================================
+\section{Cauchy Sequences \& Completeness}
+% ======================================================================
+
+\begin{defn}[Cauchy sequence]
+$(x_n)$ is a \emph{Cauchy sequence} iff for every $\eps>0$ there is $D$ with $\abs{x_{n+k} - x_n} < \eps$ for all $k \in \N$, $n > D$.
+\end{defn}
+
+\begin{lem}
+Convergent $\Rightarrow$ Cauchy.
+\begin{proofsketch}
+$\abs{x_m - x_n} \le \abs{x_m - a} + \abs{a - x_n} < 2\eps$.
+\end{proofsketch}
+\end{lem}
+
+\begin{thm}[Completeness axiom]
+Every Cauchy sequence of real numbers converges to a real limit. (This distinguishes $\R$ from $\Q$.)
+\end{thm}
+
+\begin{defn}[Monotone / subsequence]
+$(x_n)$ \emph{increasing} if $x_n \le x_{n+1}$ for all $n$ (\emph{strictly} if $<$); \emph{decreasing} dually. A \emph{subsequence} is $(x_{n_k})_{k \in \N}$ with $(n_k)$ strictly increasing in $\N$.
+\end{defn}
+
+\begin{thm}
+Every real sequence has a monotone subsequence.
+\begin{proofsketch}
+Call $m$ ``convenient'' if $x_n \le x_m$ for all $n \ge m$. Infinitely many convenient indices give a decreasing subsequence; otherwise build a strictly increasing one inductively.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}
+A monotone sequence converges iff it is bounded.
+\begin{proofsketch}
+Convergent $\Rightarrow$ bounded is Lemma above. Conversely, if increasing and not convergent, it is not Cauchy: extract a subsequence with $x_{n_{j+1}} - x_{n_j} \ge \eps$, hence unbounded.
+\end{proofsketch}
+\end{thm}
+
+\begin{exm}[Heron's iteration for $\sqrt{2}$]
+$x_0 = 1$, $x_{n+1} = \frac{x_n}{2} + \frac{1}{x_n}$. Then $x_n^2 \ge 2$, the sequence is decreasing for $n \ge 1$, hence convergent; the limit $w$ satisfies $w = w/2 + 1/w$, i.e.\ $w = \sqrt{2}$. This constructs $\sqrt{2}$ as a limit.
+\end{exm}
+
+\begin{thm}[Bolzano--Weierstrass]
+Every bounded sequence has a convergent subsequence.
+\begin{proofsketch}
+Take a monotone subsequence (previous theorems); it is bounded, hence converges.
+\end{proofsketch}
+\end{thm}
+
+\begin{rem}
+A subsequence of a convergent sequence converges to the same limit. A sequence converges to $a$ iff every subsequence converges to $a$.
+\end{rem}
+
+% ======================================================================
+\section{Series}
+% ======================================================================
+
+\begin{defn}[Series]
+The \emph{series} $\sum_{n=0}^{\oo} x_n$ converges iff the sequence of \emph{partial sums} $s_m = \sum_{n=0}^{m} x_n$ converges; then $\sum_{n=0}^{\oo} x_n \deq \lim_m s_m$.
+\end{defn}
+
+\begin{exm}[Geometric series]
+$\sum_{n=0}^{\oo} x^n$ converges iff $\abs{x} < 1$, with sum $\frac{1}{1-x}$.
+\begin{proofsketch}
+$s_m = \frac{1 - x^{m+1}}{1 - x}$ for $x \neq 1$; use $x^{m+1} \to 0$ iff $\abs{x} < 1$.
+\end{proofsketch}
+\end{exm}
+
+\begin{thm}[Cauchy criterion for series]
+$\sum x_n$ converges iff for every $\eps > 0$ there is $D$ with $\abs{\sum_{n=m+1}^{m+k} x_n} < \eps$ for all $m > D$, $k \in \N$.
+\end{thm}
+
+\begin{lem}[Null sequence test]
+If $\sum x_n$ converges then $x_n \to 0$. (Converse false!)
+\end{lem}
+
+\begin{exm}[Harmonic series]
+$\sum_{n=1}^{\oo} \frac{1}{n}$ diverges although $1/n \to 0$.
+\begin{proofsketch}
+$\sum_{n=m+1}^{2m} \frac{1}{n} \ge m \cdot \frac{1}{2m} = \frac{1}{2}$ violates the Cauchy criterion.
+\end{proofsketch}
+\end{exm}
+
+\begin{prop}[Rearrangement rules]
+Linear combinations: $\sum (x_n + y_n) = \sum x_n + \sum y_n$, $\sum \lambda x_n = \lambda \sum x_n$. Adding/removing finitely many terms, or inserting/removing zeros, does not affect convergence. In a convergent series, arbitrary grouping (parenthesizing) of terms is allowed.
+\end{prop}
+
+\begin{exm}[Rearrangement matters]
+The alternating harmonic series $\sum_{n=1}^{\oo} \frac{(-1)^{n-1}}{n}$ converges (Leibniz), but a suitable rearrangement converges to $\frac{3}{2}$ times its sum. Conditionally convergent series can be rearranged to any prescribed sum (or to diverge).
+\end{exm}
+
+\begin{defn}[Absolute convergence]
+$\sum x_n$ is \emph{absolutely convergent} iff $\sum \abs{x_n}$ converges.
+\end{defn}
+
+\begin{prop}
+Absolute convergence $\Rightarrow$ convergence (Cauchy criterion + triangle inequality). Sums and multiples of absolutely convergent series are absolutely convergent.
+\end{prop}
+
+\begin{thm}[Comparison test (majorant/minorant)]
+If $0 \le \abs{x_n} \le \mu_n$ and $\sum \mu_n$ converges, then $\sum x_n$ converges absolutely. If $\abs{x_n} \ge \mu_n \ge 0$ and $\sum \mu_n$ diverges, then $\sum x_n$ does not converge absolutely.
+\end{thm}
+
+\begin{thm}[Root test]
+If $\sqrt[n]{\abs{x_n}} \le q < 1$ for all $n$ (or $\lim_n \sqrt[n]{\abs{x_n}} < 1$), then $\sum x_n$ converges absolutely.
+\end{thm}
+
+\begin{thm}[Ratio test]
+If $x_n \neq 0$ and $\abs{x_{n+1}/x_n} \le q < 1$ for all $n$ (or the limit is $<1$), then $\sum x_n$ converges absolutely.
+\end{thm}
+
+\begin{rem}
+If the root/ratio limit equals $1$, no conclusion. If it is $>1$, the terms do not tend to $0$, so the series diverges.
+\end{rem}
+
+\begin{thm}[Leibniz criterion]
+If $(x_n)$ decreases monotonically to $0$, then $\sum_{n=0}^{\oo} (-1)^n x_n$ converges.
+\begin{proofsketch}
+Even and odd partial sums are monotone and bounded, with difference $x_{2m} \to 0$.
+\end{proofsketch}
+\end{thm}
+
+\begin{exm}
+$\sum \frac{1}{n^2}$ converges (compare with $\sum \frac{1}{n(n-1)} = 1$); more generally, $\sum \frac{1}{n^d}$ converges iff $d > 1$. The series $\sum \frac{x^n}{n!}$, $\sum \frac{(-1)^n x^{2n}}{(2n)!}$, $\sum \frac{(-1)^n x^{2n+1}}{(2n+1)!}$ converge absolutely for every $x$ (ratio test) \u2014 these define $\exp$, $\cos$, $\sin$.
+\end{exm}
+
+\begin{thm}[Rearrangement theorem]
+Every rearrangement of an absolutely convergent series converges absolutely to the same sum.
+\begin{proofsketch}
+For nonnegative terms, the sum equals $\sup$ of all finite partial sums, independent of order; split a general series into positive and negative parts.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Cauchy product]
+If $\sum_j x_j$ and $\sum_k y_k$ converge absolutely, then $\sum_{n} \bigl(\sum_{j+k=n} x_j y_k\bigr)$ converges absolutely to $\bigl(\sum_j x_j\bigr)\bigl(\sum_k y_k\bigr)$.
+\end{thm}
+
+% ======================================================================
+\section{Countability}
+% ======================================================================
+
+\begin{defn}[Countable]
+$X$ is \emph{countable} iff $X = \emptyset$ or there is a surjection $\N \to X$.
+\end{defn}
+
+\begin{prop}
+Subsets, images of countable sets are countable; finite products and countable unions of countable sets are countable.
+\end{prop}
+
+\begin{exm}
+$\Z$, $\Z^n$, $\Q$, $\Q^n$, and the set of polynomials with rational coefficients are countable.
+\end{exm}
+
+\begin{thm}[Cantor]
+$\R$ is not countable.
+\begin{proofsketch}
+Diagonal argument on decimal expansions of $[0,1)$.
+\end{proofsketch}
+\end{thm}
+
+% ======================================================================
+\section{Continuous Functions}
+% ======================================================================
+
+\begin{defn}[Continuity]
+$f: X \to \R$ ($X \subseteq \R$) is \emph{continuous at} $a \in X$ iff for every $\eps > 0$ there is $\delta > 0$ with $\abs{f(x) - f(a)} < \eps$ for all $x \in X$ with $\abs{x - a} < \delta$. $f$ is \emph{continuous} iff continuous at every point.
+\end{defn}
+
+\begin{exm}
+Constants and $\id$ are continuous. The step function ($0$ for $x \le 0$, $1$ for $x>0$) is discontinuous at $0$. The Dirichlet function is continuous nowhere. $f(x)=\abs{x}$ is continuous but not differentiable at $0$.
+\end{exm}
+
+\begin{prop}[Algebra of continuous functions]
+Sums, products, quotients (where the denominator is nonzero), and compositions of continuous functions are continuous.
+\end{prop}
+
+\begin{thm}
+Every polynomial is continuous; every rational function is continuous on its domain $\set{t \mid g(t) \neq 0}$.
+\end{thm}
+
+\begin{thm}[Sequential criterion]
+$f$ is continuous at $a$ iff for every sequence $(x_n)$ in $X$ with $x_n \to a$ one has $f(x_n) \to f(a)$.
+\begin{proofsketch}
+$\eps$-$\delta$ $\Rightarrow$ sequential is direct. Conversely, if $f$ is discontinuous at $a$, pick ``witnesses'' $x_n$ with $\abs{x_n - a} < 1/n$ but $\abs{f(x_n) - f(a)} \ge \eps$.
+\end{proofsketch}
+\end{thm}
+
+\begin{rem}
+Continuity is a \emph{local} property: if $f$ coincides with a continuous function on a neighborhood of $a$, then $f$ is continuous at $a$.
+\end{rem}
+
+% ======================================================================
+\section{Continuous Functions on Intervals}
+% ======================================================================
+
+\begin{defn}[Intervals]
+Intervals are exactly the subsets $X \subseteq \R$ with the \emph{intermediate value property}: $\alpha, \beta \in X$, $\alpha < t < \beta \Rightarrow t \in X$. Types: $[a,b]$ closed/compact, $(a,b)$ open, $[a,b)$, $(a,b]$, $[a,\oo)$, $(-\oo,b]$, $(-\oo,\oo)=\R$. ``Compact'' $=$ closed and bounded.
+\end{defn}
+
+\begin{thm}[Intermediate value theorem]
+If $I$ is an interval and $f: I \to \R$ is continuous, then $f(I)$ is an interval. In particular, if $f(a) < t < f(b)$, there is $s$ between $a$ and $b$ with $f(s) = t$.
+\begin{proofsketch}
+Set $s = \inf \set{x \in [a,b] \mid f(x) \ge t}$; approximate $s$ from inside and outside by sequences and use continuity.
+\end{proofsketch}
+\end{thm}
+
+\begin{cor}
+Every polynomial of odd degree has a real root. Every $y \ge 0$ has an $n$-th root $\sqrt[n]{y}$ (unique); for odd $n$, every real number has a unique real $n$-th root.
+\end{cor}
+
+\begin{thm}[Maximum theorem]
+If $K$ is a compact interval and $f: K \to \R$ is continuous, then $f(K)$ is a compact interval: $f$ attains a minimum and a maximum.
+\begin{proofsketch}
+Boundedness: otherwise pick $x_n$ with $f(x_n) > n$; a convergent subsequence (Bolzano--Weierstrass) contradicts continuity. The sup is attained similarly.
+\end{proofsketch}
+\end{thm}
+
+\begin{lem}
+A positive continuous function on a compact interval is bounded below by a positive constant.
+\end{lem}
+
+\begin{thm}[Inverse function theorem (continuous version)]
+If $I$ is an interval and $f: I \to \R$ is injective and continuous, then $f$ is strictly monotone and $f^{-1}: f(I) \to I$ is continuous.
+\end{thm}
+
+\begin{cor}
+The root function $y \mapsto \sqrt[n]{y}$ is continuous on $[0,\oo)$ (all of $\R$ for odd $n$).
+\end{cor}
+
+% ======================================================================
+\section{Limits of Functions}
+% ======================================================================
+
+\begin{defn}[Limit of a function]
+$\lim_{x \to a} f(x) = b$ iff for every $\eps>0$ there is $\delta>0$ with $\abs{f(x)-b} < \eps$ for all $x \in I \setminus \set{a}$ with $\abs{x-a} < \delta$. One-sided limits $\lim_{x \to a^-}$, $\lim_{x \to a^+}$; limits at $\pm\oo$: replace $\abs{x-a}<\delta$ by $x > D$ (or $x < D$). Improper limits $\pm\oo$ allowed as values.
+\end{defn}
+
+\begin{prop}[Characterizations of continuity]
+For $f: I \to \R$, $a \in I$: $f$ continuous at $a$ iff $\lim_{x \to a} f(x) = f(a)$ iff the one-sided limits both equal $f(a)$.
+\end{prop}
+
+\begin{prop}[Limit rules]
+If $\lim_{x \to a} f(x) = \oo$ then $\lim_{x \to a} 1/f(x) = 0$; if $\lim_{x \to a} f(x) = 0$ and $f > 0$ near $a$, then $\lim_{x \to a} 1/f(x) = +\oo$. No rule of the form $0 \cdot \oo = ?$: e.g.\ $\lim_{x \to 0^+} c x \cdot \frac{1}{x} = c$ for any $c$.
+\end{prop}
+
+\begin{defn}[Landau symbols]
+As $x \to a$: $f = o(h)$ iff $f/h \to 0$; $f = O(h)$ iff $f/h$ stays bounded; $f \sim h$ iff $f/h \to 1$. Useful: $f = g + o(h)$ means equality up to an error that is $o(h)$.
+\end{defn}
+
+\begin{prop}[Landau rules]
+$f = O(x^m)$, $g = O(x^n)$ ($x \to 0$) $\Rightarrow f+g = O(x^{\min(m,n)})$; for $x \to \oo$: $O(x^{\max(m,n)})$. $f = O(h_1)$, $g = O(h_2) \Rightarrow fg = O(h_1 h_2)$; $o$ in one factor gives $o$ in the product. $f \sim g \Rightarrow f = O(g)$ and $g = O(f)$; $\sim$ is an equivalence relation.
+\end{prop}
+
+\begin{lem}
+If $f: [0,\oo) \to \R$ is continuous, $f \ge 0$, and $\lim_{x \to \oo} f(x) = 0$, then $f$ attains a maximum.
+\begin{proofsketch}
+Pick $s$ with $f(s) > 0$; for large $x$, $f(x) < f(s)$; apply the maximum theorem on $[0, D]$.
+\end{proofsketch}
+\end{lem}
+% ======================================================================
+\section{Complex Numbers}
+% ======================================================================
+
+\begin{defn}[Complex numbers]
+$\C = \R^2$ as a set; $z = (x,y) = x + \mathrm{i} y$ with $\re z = x$, $\im z = y$, $\mathrm{i}^2 = -1$.
+\[
+z + z' = (x+x', y+y'),\qquad z z' = (xx' - yy',\, xy' + yx').
+\]
+$\C$ is a field. $\overline{z} = x - \mathrm{i} y$ (conjugate), $\abs{z} = \sqrt{x^2 + y^2}$, $z \overline{z} = \abs{z}^2$, $z^{-1} = \overline{z}/\abs{z}^2$ for $z \neq 0$.
+\end{defn}
+
+\begin{defn}[Open / connected / domain in $\C$]
+$X \subseteq \C$ is \emph{open} iff every point has an open disk $\ball{r}(a) = \set{z \mid \abs{z-a} < r}$ inside $X$. $X$ is \emph{connected} iff any two points can be joined by a continuous path (``polygonal path'') in $X$. \emph{Domain} $=$ open + connected. $X \setminus \set{c_1,\dots,c_s}$ is a domain for any finite set of points.
+\end{defn}
+
+\begin{prop}[Complex limits]
+$\lim z_n = c$ iff $\lim \re z_n = \re c$ and $\lim \im z_n = \im c$. Cauchy criterion, Bolzano--Weierstrass, and absolute convergence carry over to $\C$; monotonicity, sup/inf, and $\pm\oo$ limits do not.
+\end{prop}
+
+\begin{thm}[Complex rational functions]
+Every rational function $z \mapsto f(z)/g(z)$ ($f, g \neq 0$ complex polynomials) is defined and continuous on the domain $G = \set{z \mid g(z) \neq 0}$. The zeros of $g$ (after cancellation) are the \emph{poles}; at a pole $c$, $\lim_{z \to c} \abs{h(z)} = \oo$.
+\end{thm}
+
+\begin{thm}[Partial fraction decomposition]
+If $\degg f < \degg g$ and $c_1,\dots,c_r$ are the zeros of $g$ with multiplicities $e_1,\dots,e_r$, then
+\[
+\frac{f(z)}{g(z)} = \sum_{j=1}^{r} \sum_{k=1}^{e_j} \frac{\alpha_{jk}}{(z - c_j)^k}
+\]
+for unique constants $\alpha_{jk} \in \C$.
+\end{thm}
+
+\begin{exm}
+$\frac{z^2+z+1}{(z-1)^2(z+2)} = \frac{1}{(z-1)^2} + \frac{2/3}{z-1} + \frac{1/3}{z+2}$. Method: multiply by $(z-c_j)^{e_j}$ and evaluate at $c_j$ to get $\alpha_{j,e_j}$; subtract and repeat.
+\end{exm}
+
+% ======================================================================
+\section{Power Series}
+% ======================================================================
+
+\begin{defn}[Pointwise / uniform convergence]
+$(f_n)$ \emph{converges pointwise} to $f$ iff $f_n(x) \to f(x)$ for each $x$. \emph{Uniformly} iff for every $\eps>0$ there is $D$ with $\abs{f_n(x) - f(x)} < \eps$ for all $x$ and all $n > D$ (one $D$ works for all $x$).
+\end{defn}
+
+\begin{exm}
+$f_n(x) = x^n$ on $[0,1]$ converges pointwise to $0$ for $x<1$ and $1$ at $x=1$ \u2014 the limit is discontinuous, so the convergence is not uniform (on $[0,1]$ or $[0,1)$), but it is uniform on every $[0,b]$, $b<1$.
+\end{exm}
+
+\begin{thm}
+A uniform limit of continuous functions is continuous.
+\begin{proofsketch}
+$3\eps$-argument: $\abs{f(x)-f(a)} \le \abs{f(x)-f_n(x)} + \abs{f_n(x)-f_n(a)} + \abs{f_n(a)-f(a)}$.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Uniform Cauchy criterion]
+A series of functions $\sum f_n$ converges uniformly iff for every $\eps>0$ there is $D$ with $\abs{\sum_{n=m+1}^{m+k} f_n(x)} < \eps$ for all $x$, all $m > D$, all $k$. Uniform absolute convergence ($\sum \norm{f_n}_\oo$ converges) implies uniform convergence; a geometric majorant $\abs{f_n(x)} \le c q^n$ ($q<1$) suffices.
+\end{thm}
+
+\begin{defn}[Power series]
+$\sum_{n=0}^{\oo} a_n (z-a)^n$ is a \emph{power series} about $a \in \C$.
+\end{defn}
+
+\begin{thm}[Convergence of power series]
+For a power series about $a$ there is a \emph{radius of convergence} $r \in [0,\oo]$ with
+\[
+\ball{r}(a) \subseteq K \subseteq \cball{r}(a),
+\]
+where $K$ is the set of convergence points; the series converges \emph{absolutely uniformly} on every closed disk $\cball{\rho}(a)$, $\rho < r$. On the boundary circle, anything can happen.
+\end{thm}
+
+\begin{cor}
+The sum of a power series is continuous on its disk of convergence.
+\end{cor}
+
+\begin{prop}[Operations on power series]
+Sums and Cauchy products of power series about the same center are power series about that center (radius at least the minimum of the two). If $\lim \abs{a_n/a_{n+1}}$ exists, it equals the radius of convergence.
+\end{prop}
+
+\begin{exm}
+Radii: $\sum z^n$: $r=1$ (diverges everywhere on the boundary); $\sum z^n/n$: $r=1$ (converges on the whole boundary except $z=1$); $\sum z^n/n^2$: $r=1$ (converges absolutely on the whole boundary); $\sum n! z^n$: $r=0$; $\exp$, $\cos$, $\sin$ series: $r=\oo$.
+\end{exm}
+
+% ======================================================================
+\section{The Exponential Function}
+% ======================================================================
+
+\begin{defn}[Exponential function]
+$\exp: \C \to \C$, $\exp z = \sum_{n=0}^{\oo} \frac{z^n}{n!}$ (radius $\oo$). Write $\e^z$ for $\exp z$; $\e = \exp 1 \approx 2.72$.
+\end{defn}
+
+\begin{thm}[Functional equation]
+$\exp(w+z) = \exp(w)\exp(z)$ for all $w,z \in \C$; consequently $\exp z \neq 0$ and $1/\exp z = \exp(-z)$.
+\begin{proofsketch}
+Cauchy product of the two absolutely convergent series + binomial theorem.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Real exponential and logarithm]
+$\exp: \R \to (0,\oo)$ is strictly increasing and bijective; its continuous inverse is the \emph{logarithm} $\log: (0,\oo) \to \R$.
+\end{thm}
+
+\begin{defn}[General powers]
+$a^z \deq \e^{z \log a}$ for $a > 0$, $z \in \C$.
+\end{defn}
+
+\begin{prop}[Growth comparisons]
+For every $b \in \R$: $\lim_{x \to \oo} \e^x / x^b = \oo$; for $b>0$: $\lim_{x \to \oo} \log x / x^b = 0$ and $\lim_{x \to 0^+} x^b \log x = 0$. In Landau terms: $\log x = o(x^b)$ ($x\to\oo$) and $\log x = o(x^{-b})$ ($x \to 0^+$).
+\end{prop}
+
+\begin{thm}[Euler's formula]
+$\e^{\mathrm{i} z} = \cos z + \mathrm{i} \sin z$ for all $z \in \C$, where
+\[
+\cos z = \sum_{k=0}^{\oo} \frac{(-1)^k z^{2k}}{(2k)!}, \qquad
+\sin z = \sum_{k=0}^{\oo} \frac{(-1)^k z^{2k+1}}{(2k+1)!}.
+\]
+Hence $\cos z = \frac{\e^{\mathrm{i}z} + \e^{-\mathrm{i}z}}{2}$, $\sin z = \frac{\e^{\mathrm{i}z} - \e^{-\mathrm{i}z}}{2\mathrm{i}}$, and $\cos^2 y + \sin^2 y = 1$, $\abs{\e^{\mathrm{i} y}} = 1$ for real $y$.
+\end{thm}
+
+\begin{thm}[Addition theorems]
+$\cos(x+y) = \cos x \cos y - \sin x \sin y$; $\sin(x+y) = \sin x \cos y + \cos x \sin y$.
+\begin{proofsketch}
+Compare real and imaginary parts in $\e^{\mathrm{i}(x+y)} = \e^{\mathrm{i}x}\e^{\mathrm{i}y}$.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Periodicity]
+The map $y \mapsto \e^{\mathrm{i} y}$ wraps $\R$ onto the unit circle $S = \set{w \in \C \mid \abs{w} = 1}$ counterclockwise; $\e^{\mathrm{i}x} = \e^{\mathrm{i}y}$ iff $x - y \in 2\pi \Z$. The number $\pi$ is defined by: $\pi/2$ is the unique zero of $\cos$ in $(0,2)$; then $\e^{\mathrm{i}\pi/2} = \mathrm{i}$, $\e^{\mathrm{i}\pi} = -1$.
+\end{thm}
+
+\begin{defn}[Trigonometric / inverse functions]
+$\tan = \sin/\cos$ on $\C \setminus \set{(k+\frac{1}{2})\pi}$, $\cot = \cos/\sin$ on $\C \setminus \pi\Z$. Restricted inverses: $\arccos: [-1,1] \to [0,\pi]$, $\arcsin: [-1,1] \to [-\frac{\pi}{2},\frac{\pi}{2}]$, $\arctan: \R \to (-\frac{\pi}{2},\frac{\pi}{2})$, $\arccot: \R \to (0,\pi)$.
+\end{defn}
+
+\begin{thm}
+On any open interval of length $< 2\pi$, $y \mapsto \e^{\mathrm{i} y}$ is injective with continuous inverse. $f: \R \to \C$ is $T$-periodic ($T>0$) iff $f(t) = g(\e^{2\pi \mathrm{i} t / T})$ for a unique $g: S \to \C$; $f$ continuous iff $g$ continuous.
+\end{thm}
+
+\begin{rem}
+$\e^{z} = \e^{x}(\cos y + \mathrm{i} \sin y)$ for $z = x + \mathrm{i} y$: $\abs{\e^z} = \e^x$ depends only on $x$, the ``angle'' $\e^{\mathrm{i} y}$ only on $y$ \u2014 polar coordinates. A single-valued complex logarithm requires restricting $\exp$ (e.g.\ to a strip $\set{z \mid -\pi < \im z \le \pi}$, giving the principal branch $\Logm$ with $\Logm w = \log\abs{w} + \mathrm{i}\Argm w$, $\Argm \in (-\pi, \pi]$); then $\sqrt[n]{z} \deq \e^{\Logm z / n}$ is one of $n$ possible root functions.
+\end{rem}
+% ======================================================================
+\section{Differentiation}
+% ======================================================================
+
+\begin{defn}[Derivative]
+$f: I \to \R$ is \emph{differentiable at} $a \in I$ iff
+\[
+f'(a) = \lim_{x \to a} \frac{f(x) - f(a)}{x - a} = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}
+\]
+exists in $\R$. Equivalent ``little-o'' form: $f(a+h) = f(a) + b h + o(h)$ as $h \to 0$ iff $f'(a) = b$.
+\end{defn}
+
+\begin{prop}
+Differentiable $\Rightarrow$ continuous. Not conversely: $f(x) = \abs{x}$ is continuous but not differentiable at $0$. There even exist continuous functions differentiable nowhere.
+\end{prop}
+
+\begin{prop}[Differentiation rules]
+$(f+g)' = f' + g'$; $(\lambda f)' = \lambda f'$; $(fg)' = f'g + fg'$; $\bigl(\frac{f}{g}\bigr)' = \frac{f'g - fg'}{g^2}$; chain rule: $(g \comp f)' = (g' \comp f) \cdot f'$.
+\end{prop}
+
+\begin{prop}[Standard derivatives]
+$(x^n)' = n x^{n-1}$ (all $n \in \Z$, on the natural domain); $(\e^x)' = \e^x$; $(\log x)' = 1/x$ ($x>0$); $(\sqrt[n]{x})' = \frac{1}{n} x^{\frac{1}{n}-1}$ ($x>0$); $(\sin x)' = \cos x$; $(\cos x)' = -\sin x$; $(\tan x)' = 1 + \tan^2 x = 1/\cos^2 x$; $(\arcsin x)' = \frac{1}{\sqrt{1-x^2}}$; $(\arccos x)' = -\frac{1}{\sqrt{1-x^2}}$; $(\arctan x)' = \frac{1}{1+x^2}$; $(\arccot x)' = -\frac{1}{1+x^2}$; $(x^b)' = b x^{b-1}$ ($x>0$, $b \in \R$).
+\end{prop}
+
+\begin{defn}[Higher derivatives / $C^k$]
+$f^{(k)} = (f^{(k-1)})'$; $f$ is \emph{$k$-times differentiable}; if $f^{(k)}$ is continuous, $f$ is a \emph{$C^k$-function}. $C^0$ = continuous, $C^1$ = differentiable with continuous derivative, $C^{\oo}$ = smooth.
+\end{defn}
+
+\begin{rem}
+Complex differentiability of $f: G \to \C$ ($G \subseteq \C$ a domain) means the complex limit $f'(a) = \lim_{z \to a} \frac{f(z)-f(a)}{z-a}$ exists \u2014 a much stronger condition than real differentiability (the map $z \mapsto \overline{z}$ is nowhere complex-differentiable). On domains, complex-differentiable functions are automatically $C^{\oo}$.
+\end{rem}
+
+% ======================================================================
+\section{The Mean Value Theorem}
+% ======================================================================
+
+\begin{thm}[Rolle's theorem]
+If $f: [a,b] \to \R$ is continuous, differentiable on $(a,b)$, and $f(a) = f(b)$, then there is $t \in (a,b)$ with $f'(t) = 0$.
+\begin{proofsketch}
+At an interior maximum (or minimum), the difference quotients have opposite signs from left and right.
+\end{proofsketch}
+\end{thm}
+
+\begin{thm}[Mean value theorem]
+If $f: [a,b] \to \R$ is continuous and differentiable on $(a,b)$, then there is $t \in (a,b)$ with
+\[
+\frac{f(b) - f(a)}{b - a} = f'(t).
+\]
+\begin{proofsketch}
+Apply Rolle to $h(x) = f(x) - \alpha - \beta x$ with $\beta = \frac{f(b)-f(a)}{b-a}$ chosen so $h(a) = h(b)$.
+\end{proofsketch}
+\end{thm}
+
+\begin{cor}
+If $f' = 0$ on an interval, then $f$ is constant.
+\end{cor}
+
+\begin{thm}[Monotonicity]
+For $f: [a,b] \to \R$ continuous, differentiable on $(a,b)$:
+\begin{itemize}
+\item $f'(x) \ge 0$ on $(a,b)$ $\Leftrightarrow$ $f$ increasing on $[a,b]$;
+\item $f'(x) > 0$ on $(a,b)$ $\Rightarrow$ $f$ strictly increasing on $[a,b]$ (converse false: $x^3$).
+\end{itemize}
+\end{thm}
+
+\begin{thm}[Derivative of the inverse]
+If $f: I \to \R$ is differentiable with $f' > 0$ everywhere, then $f$ is strictly increasing and $f^{-1}: f(I) \to I$ is differentiable with
+\[
+(f^{-1})'(y) = \frac{1}{f'(f^{-1}(y))}.
+\]
+\end{thm}
+
+\begin{defn}[Local extremum]
+$f$ has a \emph{local minimum} at $a$ iff $f(x) \ge f(a)$ for all $x$ near $a$; \emph{strict} if $>$ for $x \neq a$. Dually for maximum.
+\end{defn}
+
+\begin{thm}[Extremum criteria]
+Let $I$ be open, $f: I \to \R$ differentiable.
+\begin{itemize}
+\item If $f$ has a local extremum at $a$, then $f'(a) = 0$ (necessary condition).
+\item If $f'(a) = 0$ and $f''(a) > 0$, then $f$ has a strict local minimum at $a$ (dually $f''(a) < 0$: strict local maximum). If $f''(a) = 0$: no conclusion ($x^4$ vs.\ $x^3$ at $0$).
+\end{itemize}
+\end{thm}
+
+\begin{thm}[L'H\^opital's rule ($\frac{0}{0}$)]
+If $f, g: (a,b) \to \R$ are differentiable, $\lim_{x \to b} f(x) = \lim_{x \to b} g(x) = 0$, $g' \neq 0$, and $\lim_{x \to b} f'(x)/g'(x)$ exists (possibly $\pm\oo$), then $\lim_{x \to b} f(x)/g(x)$ exists and equals it. Analogous $\frac{\oo}{\oo}$ version. Also valid for one-sided and two-sided limits.
+\end{thm}
+
+\begin{exm}
+$\lim_{n \to \oo} \bigl(1 + \frac{t}{n}\bigr)^n = \e^t$: write as $\exp\bigl(x \log(1 + t/x)\bigr)$ and apply L'H\^opital to $\frac{\log(1+t/x)}{1/x}$.
+\end{exm}
+
+% ======================================================================
+\section{Analytic Functions}
+% ======================================================================
+
+\begin{defn}[Analytic]
+$f: X \to \C$ ($X \subseteq \R$ interval or $X \subseteq \C$ domain) is \emph{analytic} iff every $a \in X$ has a neighborhood on which $f$ equals a convergent power series $\sum a_n (z-a)^n$.
+\end{defn}
+
+\begin{thm}[Composition of power series]
+If $f(z) = \sum a_j (z-a)^j$ converges on $\ball{\delta}(a)$ and $f\bigl(\ball{\delta}(a)\bigr) \subseteq \ball{r}(b)$ where $g(w) = \sum b_k (w-b)^k$ has radius $r$, then $g \comp f$ is given by a convergent power series about $a$ on $\ball{\delta}(a)$.
+\end{thm}
+
+\begin{prop}
+Sums, products, quotients (denominator nonzero at the point), and compositions of analytic functions are analytic. Every power series defines an analytic function on its disk of convergence (re-expand about any interior point).
+\end{prop}
+
+\begin{thm}[Termwise differentiation]
+A power series and its termwise derivative have the same radius of convergence, and on the disk of convergence
+\[
+\frac{\dd}{\dd z} \sum_{n=0}^{\oo} a_n (z-a)^n = \sum_{n=1}^{\oo} n a_n (z-a)^{n-1}.
+\]
+In particular, every analytic function is $C^{\oo}$. Termwise integration is also allowed (the integrated series has the same radius).
+\end{thm}
+
+\begin{exm}[Derivatives from series]
+$\exp' = \exp$; $(\log x)' = 1/x$; $(x^b)' = b x^{b-1}$; $\cos' = -\sin$, $\sin' = \cos$; $(\arctan x)' = \frac{1}{1+x^2}$, $(\arcsin x)' = \frac{1}{\sqrt{1-x^2}}$, $(\arccos x)' = -\frac{1}{\sqrt{1-x^2}}$.
+\end{exm}
+
+\begin{defn}[Antiderivative]
+$F$ is an \emph{antiderivative} (primitive) of $f$ on an interval iff $F' = f$. Any two antiderivatives differ by a constant. For a power series, the termwise integrated series is an antiderivative.
+\end{defn}
+
+\begin{cor}
+If $f'$ is analytic on an interval, then $f$ is analytic. Hence $\log$, $\arctan$, $\arccot$, $x^b$ ($x>0$), $\arcsin$, $\arccos$ are analytic on their domains. Not analytic: $\abs{x}$ (at $0$), $\sqrt[n]{x}$ (at $0$, $n>1$), $\arcsin/\arccos$ (at $\pm 1$), $z \mapsto \overline{z}$, and the smooth but non-analytic $f(x) = 0$ for $x \le 0$, $f(x) = \e^{-1/x}$ for $x > 0$ (all derivatives vanish at $0$, yet $f \neq 0$).
+\end{cor}
+
+% ======================================================================
+\section{Taylor Series}
+% ======================================================================
+
+\begin{lem}[Taylor coefficients]
+If an analytic $f$ is represented near $a$ by $\sum a_n (z-a)^n$, then necessarily
+\[
+a_n = \frac{f^{(n)}(a)}{n!}.
+\]
+The series $\sum \frac{f^{(n)}(a)}{n!} (z-a)^n$ is the \emph{Taylor series} of $f$ about $a$.
+\end{lem}
+
+\begin{thm}[Identity theorem]
+If two analytic functions on an interval/domain have the same Taylor series at one point, they are equal everywhere.
+\end{thm}
+
+\begin{exm}[Important Taylor series (about $0$)]
+{\footnotesize\[
+\begin{gathered}
+\e^z = \sum_{n=0}^{\oo} \frac{z^n}{n!} \quad (r = \oo),\qquad
+\frac{1}{1-z} = \sum_{n=0}^{\oo} z^n \quad (r = 1),\\
+\cos z = \sum_{k=0}^{\oo} \frac{(-1)^k z^{2k}}{(2k)!},\quad
+\sin z = \sum_{k=0}^{\oo} \frac{(-1)^k z^{2k+1}}{(2k+1)!} \quad (r = \oo),\\
+\log(1+z) = \sum_{m=1}^{\oo} \frac{(-1)^{m-1}}{m} z^m \quad (r = 1),\\
+\arctan z = \sum_{m=0}^{\oo} \frac{(-1)^m}{2m+1} z^{2m+1} \quad (r = 1),\\
+(1+z)^b = \sum_{n=0}^{\oo} \binom{b}{n} z^n \quad (r = 1).
+\end{gathered}
+\]}
+Here $\binom{b}{n} = \frac{b(b-1)\cdots(b-n+1)}{n!}$ is the \emph{generalized binomial coefficient}. The last series is the \emph{binomial series}; for $b \in \N$ it terminates (binomial formula, $r = \oo$). In particular $\sqrt{1+z} = 1 + \frac{z}{2} - \frac{z^2}{8} + \frac{z^3}{16} - \frac{5z^4}{128} + \cdots$.
+\end{exm}
+
+\begin{exm}[Taylor series of rational functions]
+Expand $\frac{1}{z-c}$ about $a \neq c$ as a geometric series in $\frac{z-a}{c-a}$: valid for $\abs{z-a} < \abs{c-a}$. Differentiating gives the series for $\frac{1}{(z-c)^n}$. The Taylor series of a rational function about $a$ has radius exactly $\min_j \abs{a - c_j}$ over the poles $c_j$. Example: $\frac{1}{1+x^2} = \sum (-1)^n x^{2n}$ has radius $1$ \u2014 the complex poles $\pm\mathrm{i}$ explain this from the real viewpoint.
+\end{exm}
+
+\begin{thm}
+If $f$ is analytic on $\ball{r}(a)$, its Taylor series about $a$ has radius at least $r$.
+\end{thm}
+
+\begin{defn}[Taylor polynomial]
+For a $C^k$-function $f$ on an interval,
+\[
+T_a^k f(x) = \sum_{j=0}^{k} \frac{f^{(j)}(a)}{j!} (x-a)^j
+\]
+is the \emph{$k$-th Taylor polynomial} at $a$.
+\end{defn}
+
+\begin{prop}[Best approximation property]
+Among all polynomials of degree $\le k$, $T_a^k f$ is the unique one with
+\[
+f(x) = T_a^k f(x) + o(\abs{x-a}^k) \quad (x \to a),
+\]
+i.e.\ it matches $f$ and its first $k$ derivatives at $a$: $\bigl(T_a^k f\bigr)^{(j)}(a) = f^{(j)}(a)$ for $j \le k$.
+\end{prop}
+
+\begin{prop}[Computing with Taylor polynomials]
+$T_a^k(f+g) = T_a^k f + T_a^k g$; $T_a^k(f \cdot g) = T_a^k\bigl(T_a^k f \cdot T_a^k g\bigr)$ (truncate the product to degree $k$); $T_a^k(g \comp f) = T_a^k\bigl(T_{f(a)}^k g \comp T_a^k f\bigr)$ (truncate). For $k=1$ the composition rule is the chain rule.
+\end{prop}
+
+\begin{rem}[Caution]
+The Taylor series of a $C^{\oo}$-function need not converge to the function: for $f(x) = 0$ ($x\le 0$), $\e^{-1/x}$ ($x>0$), the Taylor series at $0$ is the zero series, yet $f \neq 0$.
+\end{rem}
+
+\begin{defn}[Asymptotic expansion]
+$f = \sum_{k=0}^{n} \lambda_k g_k + o(g_n)$ as $x \to a$, where $g_{k+1} = o(g_k)$, is an \emph{asymptotic expansion} of $f$ w.r.t.\ the scale $(g_k)$. Taylor series are the special case $g_k(x) = (x-a)^k$. The series need not converge.
+\end{defn}
+
+% ======================================================================
+\section{Quick Reference: Limits}
+% ======================================================================
+
+\begin{itemize}
+\item $\lim_{n\to\oo} \sqrt[n]{n} = 1$, $\lim_{n\to\oo} \sqrt[n]{n!} = \oo$, $\lim_{n\to\oo} \frac{n!}{n^n} = 0$.
+\item $\lim_{n\to\oo} \frac{a^n}{n!} = 0$ for every fixed $a$; $\lim_{n\to\oo} \frac{n!}{a^n} = \oo$.
+\item $\lim_{n\to\oo} \bigl(1 + \frac{x}{n}\bigr)^n = \e^x$; $\bigl(1+\frac{1}{n}\bigr)^n \uparrow \e$, $\e < 3$.
+\item $\lim_{x\to 0} \frac{\sin x}{x} = 1$; $\lim_{x\to 0} \frac{1 - \cos x}{x^2} = \frac{1}{2}$; $\lim_{x\to 0} \frac{\e^x - 1}{x} = 1$; $\lim_{x\to 0} \frac{\log(1+x)}{x} = 1$.
+\item $\lim_{x\to\oo} \frac{\log x}{x^b} = 0$ ($b>0$); $\lim_{x\to\oo} \frac{\e^x}{x^b} = \oo$ (any $b$).
+\item $\lim_{n\to\oo} \frac{1}{n} \sum_{k=1}^{n} f(k/n) = \int_0^1 f(x)\,\dd x$ (Riemann sums).
+\item $\sum_{n=1}^{\oo} \frac{1}{n^d}$ converges iff $d > 1$; $\sum \frac{(-1)^{n-1}}{n} = \log 2$.
+\item $\sum_{n=0}^{\oo} \frac{1}{n!} = \e$; $\sum_{n=0}^{\oo} \frac{(-1)^n}{(2n+1)!} = \sin 1$; $\sum_{n=0}^{\oo} \frac{(-1)^n}{(2n)!} = \cos 1$.
+\end{itemize}
+
+% ======================================================================
+\section{Quick Reference: Inequalities}
+% ======================================================================
+
+\begin{itemize}
+\item Triangle: $\abs{x \pm y} \le \abs{x} + \abs{y}$; reverse: $\abs{x+y} \ge \bigl\lvert\abs{x} - \abs{y}\bigr\rvert$.
+\item Bernoulli: $(1+x)^n \ge 1 + nx$ for $x \ge -1$, $n \in \N$.
+\item AM--GM: $\frac{x_1 + \cdots + x_n}{n} \ge \sqrt[n]{x_1 \cdots x_n}$ for $x_i \ge 0$.
+\item Cauchy--Schwarz: $\abs{\sum x_i y_i} \le \sqrt{\sum x_i^2}\sqrt{\sum y_i^2}$.
+\item $\abs{\sin x} \le \abs{x}$; $\abs{1 - \cos x} \le \frac{x^2}{2}$; $\e^x \ge 1 + x$ for all $x$.
+\item $\log x \le x - 1$ for $x > 0$, with equality iff $x = 1$; $\log(1+x) \le x$.
+\end{itemize}
+
+\end{multicols*}
+
+\end{document}
